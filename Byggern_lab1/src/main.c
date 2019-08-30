@@ -28,34 +28,55 @@
  /**
  * Support and FAQ: visit <a href="http://www.atmel.com/design-support/">Atmel Support</a>
  */
- 
+
 #define F_CPU 4915200 // Clock frequency in Hz
 
 #include <avr/io.h>
 #include <util/delay.h>
-#include <asf.h>
+//#include <board.h>
+//#include <asf.h>
+//#include "ASF/common/boards/board.h"
 #include "UARTDriver.h"
 
 int main (void)
 {
 	// Insert system clock initialization code here (sysclk_init()).
 
-	board_init();
-	
-	unsigned char letter = 'e';
-	
+	DDRA = 0x01;
+
+	unsigned char LED_on = '1';
+	unsigned char LED_off = '0';
+
 	USART_Init();
-	
+
+	//unsigned char msg;
+
 	while(1) {
-		
-		USART_transmit(letter);
-		_delay_ms(100);
-		
+		//printf("letter");
+		//USART_transmit(letter);
+
+		unsigned char msg = USART_Receive();
+
+		if(msg == LED_on) {
+			PORTA |= (1 << PA0);
+			printf("Power on" );
+		}
+		else if(msg == LED_off) {
+			PORTA &= !(1 << PA0);
+			printf("Power off" );
+		}
+		/*else {
+			printf("Illegal");
+		}*/
+
+		_delay_ms(300);
+
+
 	}
-	
+
 	/*
 	DDRA =  0x01;
-	
+
 	while(1) {
 		PORTA |= (1 << PA0);
 		_delay_ms(500);
