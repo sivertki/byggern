@@ -59,11 +59,11 @@ int main (void)
 
 		if(msg == LED_on) {
 			PORTA |= (1 << PA0);
-			printf("Power on" );
+			printf("Power on\n\r" );
 		}
 		else if(msg == LED_off) {
 			PORTA &= !(1 << PA0);
-			printf("Power off" );
+			printf("Power off\n\r" );
 		}
 		/*else {
 			printf("Illegal");
