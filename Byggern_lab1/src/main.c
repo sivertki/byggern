@@ -37,37 +37,37 @@
 //#include <asf.h>
 //#include "ASF/common/boards/board.h"
 #include "UARTDriver.h"
+#include "SRAMDriver.h"
 
 int main (void)
 {
 	// Insert system clock initialization code here (sysclk_init()).
+	/*
+	DDRA = 0xFF;
+	//enable ting
 
-	DDRA = 0x01;
+	DDRE = 0x02;
+	//PORTE &= ~(1 << PE1);
+	//USART_Init();
 
-	unsigned char LED_on = '1';
-	unsigned char LED_off = '0';
+	PORTA |= (1 << PA0) | (1 << PA1);
 
+	//_delay_ms(300);
+	PORTE |= (1 << PE1);
+
+	//_delay_ms(300);
+
+	PORTE &= ~(1 << PE1);
+	*/
+	_delay_ms(3000);
 	USART_Init();
-
-	//unsigned char msg;
+	_delay_ms(300);
+	SRAM_init();
+	_delay_ms(1000);
+	SRAM_test();
 
 	while(1) {
-		//printf("letter");
-		//USART_transmit(letter);
 
-		unsigned char msg = USART_Receive();
-
-		if(msg == LED_on) {
-			PORTA |= (1 << PA0);
-			printf("Power on\n\r" );
-		}
-		else if(msg == LED_off) {
-			PORTA &= !(1 << PA0);
-			printf("Power off\n\r" );
-		}
-		/*else {
-			printf("Illegal");
-		}*/
 
 		_delay_ms(300);
 
