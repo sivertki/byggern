@@ -39,6 +39,8 @@
 #include "UARTDriver.h"
 #include "SRAMDriver.h"
 
+#define BASE_ADDRESS 0x1000
+
 int main (void)
 {
 	// Insert system clock initialization code here (sysclk_init()).
@@ -59,20 +61,50 @@ int main (void)
 
 	PORTE &= ~(1 << PE1);
 	*/
-	_delay_ms(3000);
+	_delay_ms(500);
+
 	USART_Init();
-	_delay_ms(300);
 	SRAM_init();
-	_delay_ms(1000);
+
 	SRAM_test();
+	while(1) {
+		_delay_ms(300);
+	}
+	/*
+	unsigned char OLED = '0';
+	unsigned char ADC = '1';
+	unsigned char SRAM = '2';
+
+
+	//SRAM_test();
+	uint8_t data = 0xAB;
+	volatile char *ext_dev = (char *) BASE_ADDRESS;
+
+	uint16_t OLED_addr = 0x0000;
+	uint16_t ADC_addr = 0x0400;
+	uint16_t SRAM_addr = 0x0850;
 
 	while(1) {
+
+		unsigned char msg = USART_Receive();
+
+
+		if(msg == OLED) {
+			ext_dev[OLED_addr] = data;
+		}
+		else if(msg == ADC) {
+			ext_dev[ADC_addr] = data;
+		}
+		else if(msg == SRAM) {
+			ext_dev[SRAM_addr] = data;
+		}
 
 
 		_delay_ms(300);
 
 
 	}
+	*/
 
 	/*
 	DDRA =  0x01;
