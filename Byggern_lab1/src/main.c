@@ -63,20 +63,40 @@ int main (void)
 
 	PORTE &= ~(1 << PE1);
 	*/
+
+	// Setting the pins PB0 & PB1 as INPUTS.
+	DDRB &= ~(1<<PB0);
+	DDRB &= ~(1<<PB1);
+
 	_delay_ms(500);
 
 	USART_Init();
 	SRAM_init();
+
+	// Running calibration function on the joystick.
+	joy_cal();
 
 	//SRAM_test();
 	while(1) {
 
 
 
-		_delay_ms(300);
+		_delay_ms(700);
+		/*
 		struct QuadChannel in;
 		in = get_adc_values();
 		printf("LS: %d , RS: %d, Y: %d, X: %d\n\r", in.chan1, in.chan2, in.chan3, in.chan4);
+		*/
+
+
+		struct ButtonStruct butt;
+		butt = get_button_values();
+		printf("LEFT BUTTON: %d, RIGHT BUTTON: %d\n\r", butt.lb, butt.rb);
+		
+
+		//struct Percentage per;
+		//per = joy_pos();
+		//printf("Y-POS: %d, X-POS: %d \n\r", per.yPercentage, per.xPercentage);
 
 	}
 

@@ -1,6 +1,9 @@
 #include <stdio.h>
-#include "ADCDriver.h"
+#include <avr/io.h>
 #include <util/delay.h>
+#include <stdbool.h>
+#include "ADCDriver.h"
+
 
 #define BASE_ADDRESS 0x1000
 #define BASE_ADC_ADDRESS 0x1400
@@ -16,28 +19,8 @@ void set_channel(int channel);
 uint8_t read_channel(void);
 //struct DualChannel get_dual_inputs(int in1, int in2);
 
-/*
-struct DualChannel get_slider_inputs(void) {
-    return get_dual_inputs(1, 2);
- }
-
-struct DualChannel get_joystick_inputs(void) {
-    return get_dual_inputs(3,4);
-}
-
-struct DualChannel get_dual_inputs(int in1, int in2) {
-    struct DualChannel val;
-    set_channel(in1);
-    _delay_ms(40);
-    val.chan1 = read_channel();
-
-    set_channel(in2);
-    _delay_ms(40);
-    val.chan2 = read_channel();
-
-    return val;
-}
-*/
+int xCenter;
+int yCenter;
 
 struct QuadChannel get_adc_values() {
     struct QuadChannel val;
@@ -57,6 +40,20 @@ struct QuadChannel get_adc_values() {
     _delay_ms(40);
     val.chan4 = read_channel();
     return val;
+}
+
+struct ButtonStruct get_button_values() {
+    struct ButtonStruct buttonValue;
+
+    uint8_t read_port_b = PINB;
+
+    bool left_button = read_port_b & (1<<PB1);
+    bool right_button = read_port_b & (1<<PB0);
+
+    buttonValue.lb = left_button;
+    buttonValue.rb = right_button;
+
+    return buttonValue;
 }
 
  void set_channel(int channel) {
@@ -83,3 +80,43 @@ uint8_t read_channel(void) {
      uint8_t read_value = ext_adc[0];
      return read_value;
  }
+
+void joy_cal() {
+     struct QuadChannel joy_values = get_adc_values();
+
+     yCenter = joy_values.chan3;
+     xCenter = joy_values.chan4;
+
+     printf("Calibration complete. Center Y = %d & Center X = %d\n\r", yCenter, xCenter);
+
+     _delay_ms(500);
+ }
+
+struct Percentage joy_pos() {
+    struct Percentage returnPercentage;
+
+    float positive_y = (100 / (255 - yCenter));
+    float positive_x = (100 / (255 - xCenter));
+
+    struct QuadChannel current_values = get_adc_values();
+
+    if(current_values.chan3 >= yCenter) {
+        float printYPercentage = positive_y * (current_values.chan3 - yCenter);
+        returnPercentage.yPercentage = (int)printYPercentage;
+    }
+    else if(current_values.chan3 < yCenter) {
+        float printYPercentage = (100 / yCenter) * (current_values.chan3 - yCenter);
+        returnPercentage.yPercentage = (int)printYPercentage;
+    }
+
+    if(current_values.chan4 >= xCenter) {
+        float printXPercentage = positive_x * (current_values.chan4 - xCenter);
+        returnPercentage.xPercentage = (int)printXPercentage;
+    }
+    else if(current_values.chan4 < xCenter) {
+        float printXPercentage = (100 / xCenter) * (current_values.chan4 - xCenter);
+        returnPercentage.xPercentage = (int)printXPercentage;
+    }
+
+    return returnPercentage;
+}
