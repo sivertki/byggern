@@ -29,7 +29,7 @@
  * Support and FAQ: visit <a href="http://www.atmel.com/design-support/">Atmel Support</a>
  */
 
-#define F_CPU 4915200 // Clock frequency in Hz
+#define F_CPU 4915200UL // Clock frequency in Hz
 
 #include <avr/io.h>
 #include <util/delay.h>
@@ -39,6 +39,9 @@
 #include "UARTDriver.h"
 #include "SRAMDriver.h"
 #include "ADCDriver.h"
+#include "OLEDDriver.h"
+#include <avr/pgmspace.h>
+
 
 #define BASE_ADDRESS 0x1000
 
@@ -73,26 +76,43 @@ int main (void)
 	USART_Init();
 	SRAM_init();
 
+
 	// Running calibration function on the joystick.
 	joy_cal();
 
-	//SRAM_test();
+	const char charactera PROGMEM = "A";
+	//const char characterf PROGMEM = "F";
+
+	_delay_ms(700);
+	printf("Initializing OLED\n\r");
+	OLED_init();
+	printf("OLED initilaized\n\r");
+	OLED_reset();
+	_delay_ms(700);
+	SRAM_test();
 	while(1) {
 
 
 
-		_delay_ms(700);
-		/*
+		_delay_ms(100);
+
 		struct QuadChannel in;
 		in = get_adc_values();
-		printf("LS: %d , RS: %d, Y: %d, X: %d\n\r", in.chan1, in.chan2, in.chan3, in.chan4);
-		*/
-
-
 		struct ButtonStruct butt;
 		butt = get_button_values();
-		printf("LEFT BUTTON: %d, RIGHT BUTTON: %d\n\r", butt.lb, butt.rb);
-		
+		printf("LEFT BUTTON: %d, RIGHT BUTTON: %d, LS: %d , RS: %d, Y: %d, X: %d \n\r", butt.lb, butt.rb, in.chan1, in.chan2, in.chan3, in.chan4);
+
+
+		//printf("Printing a\n\r");
+	  oled_write_single_char(charactera);
+
+		//_delay_ms(700);
+
+		//printf("Printing f\n\r");
+		//oled_write_single_char(characterf);
+
+		//printf("LEFT BUTTON: %d, RIGHT BUTTON: %d\n\r", butt.lb, butt.rb);
+
 
 		//struct Percentage per;
 		//per = joy_pos();
