@@ -43,29 +43,13 @@
 #include <avr/pgmspace.h>
 
 
+
 #define BASE_ADDRESS 0x1000
 
 int main (void)
 {
 	volatile char *ext_dev = (char *) BASE_ADDRESS;
 	// Insert system clock initialization code here (sysclk_init()).
-	/*
-	DDRA = 0xFF;
-	//enable ting
-
-	DDRE = 0x02;
-	//PORTE &= ~(1 << PE1);
-	//USART_Init();
-
-	PORTA |= (1 << PA0) | (1 << PA1);
-
-	//_delay_ms(300);
-	PORTE |= (1 << PE1);
-
-	//_delay_ms(300);
-
-	PORTE &= ~(1 << PE1);
-	*/
 
 	// Setting the pins PB0 & PB1 as INPUTS.
 	DDRB &= ~(1<<PB0);
@@ -80,7 +64,8 @@ int main (void)
 	// Running calibration function on the joystick.
 	joy_cal();
 
-	const char charactera PROGMEM = "A";
+	const char charactera PROGMEM = 'A';
+	const char characterb[] PROGMEM = "heisann og hoppsann og fallerallera, paa julekvelden da skal alle sammen vaere glad";
 	//const char characterf PROGMEM = "F";
 
 	_delay_ms(700);
@@ -90,33 +75,25 @@ int main (void)
 	OLED_reset();
 	_delay_ms(700);
 	SRAM_test();
+	_delay_ms(100);
+	//OLED_printf(characterb);
+	OLED_home();
 	while(1) {
 
-
-
-		_delay_ms(100);
-
+		/*
 		struct QuadChannel in;
 		in = get_adc_values();
 		struct ButtonStruct butt;
 		butt = get_button_values();
-		printf("LEFT BUTTON: %d, RIGHT BUTTON: %d, LS: %d , RS: %d, Y: %d, X: %d \n\r", butt.lb, butt.rb, in.chan1, in.chan2, in.chan3, in.chan4);
+		*/
+		//OLED_printf(characterb);
+		//_delay_ms(2000);
+		//printf("LEFT BUTTON: %d, RIGHT BUTTON: %d, LS: %d , RS: %d, Y: %d, X: %d \n\r", butt.lb, butt.rb, in.chan1, in.chan2, in.chan3, in.chan4);
+		//OLED_reset();
 
 
-		//printf("Printing a\n\r");
-	  oled_write_single_char(charactera);
+		joy_dir();
 
-		//_delay_ms(700);
-
-		//printf("Printing f\n\r");
-		//oled_write_single_char(characterf);
-
-		//printf("LEFT BUTTON: %d, RIGHT BUTTON: %d\n\r", butt.lb, butt.rb);
-
-
-		//struct Percentage per;
-		//per = joy_pos();
-		//printf("Y-POS: %d, X-POS: %d \n\r", per.yPercentage, per.xPercentage);
 
 	}
 

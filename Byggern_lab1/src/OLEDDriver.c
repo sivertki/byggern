@@ -1,4 +1,5 @@
 #include "fonts.h"
+#include "OLEDDriver.h"
 
 #define BASE_OLED_C_ADDRESS 0x1000
 #define BASE_OLED_D_ADDRESS 0x1200
@@ -9,7 +10,13 @@
 volatile char *ext_oled_d = (char*) BASE_OLED_D_ADDRESS;
 volatile char *ext_oled_c = (char*) BASE_OLED_C_ADDRESS;
 
+uint8_t font_size = 8; //Default font size
+struct OLED_position pos;
+
 void OLED_write_command(uint8_t data);
+
+const uint8_t num_menu_items = 5;
+const char *menu_items[5] = {"PING-PONG", "HIGH SCORES", "FILL", "DRAW LINE", "ANIMATION"};
 
 void OLED_init() {
   OLED_write_command(0xae);        //  display  off
@@ -48,11 +55,11 @@ void OLED_write_command(uint8_t data) {
 }
 
 void OLED_goto_line(uint8_t line) {
-
   //Set page address
   uint8_t page_start = 0xB0 + line;
   OLED_write_command(page_start);
-
+  pos.line = line;
+  pos.row = 0;
 }
 
 void OLED_goto_column(uint8_t col) {
@@ -77,9 +84,11 @@ void OLED_clear_line(uint8_t line) {
 }
 
 void OLED_goto_pos(uint8_t row, uint8_t column) {
-  //TODO
   OLED_goto_line(row);
   OLED_goto_column(column);
+  pos.row = row;
+  pos.column = column;
+  //TODO
 }
 
 void OLED_set_brightness(uint8_t lvl) {
@@ -92,19 +101,73 @@ void OLED_reset() {
     OLED_clear_line(i);
   }
   OLED_goto_pos(0, 0);
+
 }
 
 void OLED_home() {
-  //TODO
+  OLED_goto_line(0);
+  OLED_set_font(8);
+  for(uint8_t i = 0; i < num_menu_items; i ++) {
+    if(i == 0) {
+      OLED_print_selected(menu_items[i]);
+    }
+    else {
+      OLED_printf(menu_items[i]);
+    }
+    //OLED_goto_line(pos.line + 1);
+    OLED_goto_pos(pos.line + 1, 0);
+
+  }
 }
 
-void oled_write_single_char(char data) {
+void OLED_set_font(uint8_t fsize) {
+  if((fsize == 4) || (fsize == 5) || (fsize == 8)) {
+    font_size = fsize;
+  }
+}
+
+void OLED_write_single_char(char data) {
   uint8_t char_out = data - 32;
-  //TODO check for different fonts
-  for(uint8_t i = 0; i < 4; i++) {
-    //OLED_write_data(pgm_read_byte(&font4[char_out][i]));
-    OLED_write_data(0xff);
-    //printf("writing single line %d \n\r", i);
+
+  if(font_size == 4) {
+    for(uint8_t i = 0; i < 4; i++) {
+      OLED_write_data(pgm_read_byte(&font4[char_out][i]));
+    }
+    pos.row += 4;
+  }
+  else if(font_size == 5) {
+    for(uint8_t i = 0; i < 5; i++) {
+      OLED_write_data(pgm_read_byte(&font5[char_out][i]));
+    }
+    pos.row += 5;
+  }
+  else if(font_size == 8) {
+    for(uint8_t i = 0; i < 8; i++) {
+      OLED_write_data(pgm_read_byte(&font8[char_out][i]));
+    }
+    pos.row += 8;
   }
 
+}
+
+void OLED_printf(char str[]) {
+  uint8_t i = 0;
+  while(str[i] != '\0') {
+    if(pos.row >= 127 || ((font_size == 5) && (pos.row >= 122))) {
+      pos.line += 1;
+      if(pos.line == 8) {
+        pos.line = 0;
+      }
+      OLED_goto_line(pos.line);
+    }
+    OLED_write_single_char(str[i]);
+    //printf("Printing Letter: %c to pos: r:%d, c:%d , l:%d\n\r", str[i], pos.row, pos.column, pos.line);
+    i++;
+  }
+}
+
+void OLED_print_selected(char str[]) {
+  OLED_printf(">");
+  OLED_printf(str);
+  OLED_printf("<");
 }
