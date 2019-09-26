@@ -1,33 +1,10 @@
-/*
-struct DualChannel {
-    uint8_t chan1;
-    uint8_t chan2;
-};
-*/
-
-#include <stdbool.h>
 #include <stdio.h>
-
-struct QuadChannel {
-    uint8_t chan1;
-    uint8_t chan2;
-    uint8_t chan3;
-    uint8_t chan4;
-};
-
-struct ButtonStruct {
-    bool lb;
-    bool rb;
-};
+#include "DEFINITIONS.h"
 
 struct Percentage {
     int xPercentage;
     int yPercentage;
 };
-
-typedef enum Direction {UP, DOWN, LEFT, RIGHT, NONE} Direction;
-
-//struct DualChannel get_slider_inputs(void);
 
 struct QuadChannel get_adc_values(void);
 

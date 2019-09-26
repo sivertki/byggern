@@ -40,6 +40,7 @@
 #include "SRAMDriver.h"
 #include "ADCDriver.h"
 #include "OLEDDriver.h"
+#include "MenuSystem.h"
 #include <avr/pgmspace.h>
 
 
@@ -55,6 +56,11 @@ int main (void)
 	DDRB &= ~(1<<PB0);
 	DDRB &= ~(1<<PB1);
 
+	//setting pin PB2 as INPUT
+	DDRB &= ~(1<<PB2);
+	//setting up pull-up resistor for PB2
+	PORTB |= (1<<PB2);
+
 	_delay_ms(500);
 
 	USART_Init();
@@ -68,16 +74,16 @@ int main (void)
 	const char characterb[] PROGMEM = "heisann og hoppsann og fallerallera, paa julekvelden da skal alle sammen vaere glad";
 	//const char characterf PROGMEM = "F";
 
-	_delay_ms(700);
+	_delay_ms(200);
 	printf("Initializing OLED\n\r");
 	OLED_init();
 	printf("OLED initilaized\n\r");
 	OLED_reset();
-	_delay_ms(700);
+	_delay_ms(200);
 	SRAM_test();
-	_delay_ms(100);
+	_delay_ms(200);
 	//OLED_printf(characterb);
-	OLED_home();
+	menu_home();
 	while(1) {
 
 		/*
@@ -86,13 +92,16 @@ int main (void)
 		struct ButtonStruct butt;
 		butt = get_button_values();
 		*/
+
 		//OLED_printf(characterb);
 		//_delay_ms(2000);
-		//printf("LEFT BUTTON: %d, RIGHT BUTTON: %d, LS: %d , RS: %d, Y: %d, X: %d \n\r", butt.lb, butt.rb, in.chan1, in.chan2, in.chan3, in.chan4);
+		//printf("LEFT BUTTON: %d, RIGHT BUTTON: %d, JOY BUTTON:%d, LS: %d , RS: %d, Y: %d, X: %d \n\r", butt.lb, butt.rb, butt.jb, in.chan1, in.chan2, in.chan3, in.chan4);
 		//OLED_reset();
-
-
-		joy_dir();
+		Direction dir = joy_dir();
+		struct ButtonStruct butt = get_button_values();
+		//printf("direction: %d, button: %d\n\r", dir, butt.jb);
+		menu_nav(dir, butt);
+		//joy_dir();
 
 
 	}

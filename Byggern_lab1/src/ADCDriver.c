@@ -50,9 +50,11 @@ struct ButtonStruct get_button_values() {
 
     bool left_button = read_port_b & (1<<PB1);
     bool right_button = read_port_b & (1<<PB0);
+    bool joy_button = !(read_port_b & (1<<PB2));
 
     buttonValue.lb = left_button;
     buttonValue.rb = right_button;
+    buttonValue.jb = joy_button;
 
     return buttonValue;
 }
@@ -97,24 +99,25 @@ Direction joy_dir() {
    struct QuadChannel joy_values = get_adc_values();
 
     if(joy_values.chan3 >= yCenter*1.6) {
-         printf("UP\n\r");
+         //printf("UP\n\r");
          return(UP);
     } else if(joy_values.chan3 < yCenter*0.6) {
-         printf("DOWN\n\r");
+         //printf("DOWN\n\r");
          return(DOWN);
        }
 
     if(joy_values.chan4 >= xCenter*1.6) {
-         printf("RIGHT\n\r");
+         //printf("RIGHT\n\r");
          return(RIGHT);
     } else if(joy_values.chan4 < xCenter*0.6) {
-         printf("LEFT\n\r");
+         //printf("LEFT\n\r");
          return(LEFT);
        }
 
     return(NONE);
  }
 
+/*
 struct Percentage joy_pos() {
     struct Percentage returnPercentage;
 
@@ -143,3 +146,4 @@ struct Percentage joy_pos() {
 
     return returnPercentage;
 }
+*/
