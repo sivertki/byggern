@@ -17,6 +17,7 @@
 #define CHAN4_SELECT 0x0007
 
 void set_channel(int channel);
+
 uint8_t read_channel(void);
 //struct DualChannel get_dual_inputs(int in1, int in2);
 
