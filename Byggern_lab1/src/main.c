@@ -42,6 +42,8 @@
 #include "OLEDDriver.h"
 #include "MenuSystem.h"
 #include <avr/pgmspace.h>
+#include "SPIDriver.h" //TODO remove and replace with can driver
+#include "MCP2515.h" //TODO remove when not needed anymore
 
 
 
@@ -68,23 +70,51 @@ int main (void)
 
 
 	// Running calibration function on the joystick.
-	joy_cal();
+	//joy_cal();
 
-	const char charactera PROGMEM = 'A';
-	const char characterb[] PROGMEM = "heisann og hoppsann og fallerallera, paa julekvelden da skal alle sammen vaere glad";
+	//const char charactera PROGMEM = 'A';
+	//const char characterb[] PROGMEM = "heisann og hoppsann og fallerallera, paa julekvelden da skal alle sammen vaere glad";
 	//const char characterf PROGMEM = "F";
 
-	_delay_ms(200);
+	//_delay_ms(200);
+	/*
 	printf("Initializing OLED\n\r");
 	OLED_init();
 	printf("OLED initilaized\n\r");
 	OLED_reset();
 	_delay_ms(200);
-	SRAM_test();
+	//SRAM_test();
 	_delay_ms(200);
 	//OLED_printf(characterb);
 	menu_home();
+	*/
+	printf("Init starting...\n\r");
+	SPI_init();
+	printf("Init complete.\n\r");
+	PORTB |= (1<<DD_SS);
+
+	printf("Setting SS low\n\r");
+	PORTB &= ~(1<<DD_SS);
+	printf("Starting transmit...\n\r");
+	SPI_transmit(MCP_READ);
+	printf("Instruction sent.\n\r");
+	SPI_transmit(MCP_CANSTAT);
+	printf("Init address sent.\n\r");
+	SPI_transmit(0xFF);
+	printf("Innhold i CANSTAT: %c\n\r", SPI_receive());
+	PORTB |= (1<<DD_SS);
+
+	PORTB |= (1<<DD_SS);
+	SPI_transmit(MCP_WRITE);
+	SPI_transmit(CANCTRL);
+	SPI_transmit(MODE_LOOPBACK);
+	PORTB |= (1<<DD_SS);
+
 	while(1) {
+
+		MCP_writes()
+
+
 
 		/*
 		struct QuadChannel in;
@@ -97,12 +127,13 @@ int main (void)
 		//_delay_ms(2000);
 		//printf("LEFT BUTTON: %d, RIGHT BUTTON: %d, JOY BUTTON:%d, LS: %d , RS: %d, Y: %d, X: %d \n\r", butt.lb, butt.rb, butt.jb, in.chan1, in.chan2, in.chan3, in.chan4);
 		//OLED_reset();
-		Direction dir = joy_dir();
-		struct ButtonStruct butt = get_button_values();
+		//Direction dir = joy_dir();
+		//struct ButtonStruct butt = get_button_values();
 		//printf("direction: %d, button: %d\n\r", dir, butt.jb);
-		menu_nav(dir, butt);
+		//menu_nav(dir, butt);
 		//joy_dir();
 
+		//_delay_ms(200);
 
 	}
 
