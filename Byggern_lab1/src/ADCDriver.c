@@ -6,22 +6,33 @@
 #include "ADCDriver.h"
 
 
-#define BASE_ADDRESS 0x1000
-#define BASE_ADC_ADDRESS 0x1400
+#define BASE_ADDRESS 0x1000 // Start of the OLED (command) address partition.
+#define BASE_ADC_ADDRESS 0x1400 // Start of the ADC address partition.
 
 #define F_CPU 4915200 // Clock frequency in Hz
 
-#define CHAN1_SELECT 0x0004
-#define CHAN2_SELECT 0x0005
-#define CHAN3_SELECT 0x0006
-#define CHAN4_SELECT 0x0007
+#define CHAN1_SELECT 0x0004 // Select the left slider value stored in the ADC partition of the SRAM.
+#define CHAN2_SELECT 0x0005 // Select the right slider value stored in the ADC partition of the SRAM.
+#define CHAN3_SELECT 0x0006 // Select the value for the Y-axis of the joystick stored in the ADC partition of the SRAM.
+#define CHAN4_SELECT 0x0007// Select the value for the X-axis of the joystick stored in the ADC partition of the SRAM.
 
+/**
+ * \brief A function
+ */
 void set_channel(int channel);
 
+/**
+ * \brief A function
+ */
 uint8_t read_channel(void);
-//struct DualChannel get_dual_inputs(int in1, int in2);
 
+/**
+ * \brief An int containing the center value for the joystick in the X-axis, [0, 255].
+ */
 int xCenter;
+/**
+ * \brief An int containing the center value for the joystick in the Y-axis, [0, 255].
+ */
 int yCenter;
 
 struct QuadChannel get_adc_values() {
@@ -60,25 +71,31 @@ struct ButtonStruct get_button_values() {
     return buttonValue;
 }
 
- void set_channel(int channel) {
-     volatile char *ext_adc = (char*) BASE_ADC_ADDRESS;
-     if(channel == 1) {
-         ext_adc[0] = CHAN1_SELECT;
-     }
-     else if(channel == 2) {
-         ext_adc[0] = CHAN2_SELECT;
-     }
-     else if(channel == 3){
-         ext_adc[0] = CHAN3_SELECT;
-     }
-     else if(channel == 4) {
-         ext_adc[0] = CHAN4_SELECT;
-     }
-     else {
-         printf("Cannot set channel %d \n", channel);
-     }
- }
+/**
+ * \brief A function
+ */
+void set_channel(int channel) {
+   volatile char *ext_adc = (char*) BASE_ADC_ADDRESS;
+   if(channel == 1) {
+       ext_adc[0] = CHAN1_SELECT;
+   }
+   else if(channel == 2) {
+       ext_adc[0] = CHAN2_SELECT;
+   }
+   else if(channel == 3){
+       ext_adc[0] = CHAN3_SELECT;
+   }
+   else if(channel == 4) {
+       ext_adc[0] = CHAN4_SELECT;
+   }
+   else {
+       printf("Cannot set channel %d \n", channel);
+   }
+}
 
+/**
+ * \brief A function
+ */
 uint8_t read_channel(void) {
      volatile char *ext_adc = (char*) BASE_ADC_ADDRESS;
      uint8_t read_value = ext_adc[0];

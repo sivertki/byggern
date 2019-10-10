@@ -13,6 +13,7 @@ volatile char *ext_oled_d = (char*) BASE_OLED_D_ADDRESS;
 volatile char *ext_oled_c = (char*) BASE_OLED_C_ADDRESS;
 
 uint8_t font_size = 8; //Default font size
+
 struct OLED_position pos;
 
 void OLED_write_command(uint8_t data);
@@ -135,6 +136,7 @@ void OLED_write_single_char(char data) {
 
 void OLED_printf(char str[]) {
   uint8_t i = 0;
+
   while(str[i] != '\0') {
     if(pos.row >= 127 || ((font_size == 5) && (pos.row >= 122))) {
       pos.line += 1;

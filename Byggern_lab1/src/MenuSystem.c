@@ -10,8 +10,19 @@ const char *main_menu_items[5] = {"PING-PONG", "HIGH SCORES", "SETTINGS", "DRAW 
 const uint8_t num_settings_menu_items = 5;
 const char *settings_menu_items[5] = {"BRIGHTNESS", "INVERT SCREEN", "OPTION 3", "OPTION 4", "OPTION 5"};
 
+/**
+ * \brief An uint8_t containing information about the current menu item selected.
+ */
 uint8_t current_menu_selection = 1;
+
+/**
+ * \brief A Direction containing information about the last / previous direction move that was executed in the menu system
+ */
 Direction previous_direction;
+
+/**
+ * \brief An uint8_t containing information about the last menu item that was selected in the menu system.
+ */
 uint8_t previous_menu_selection = 0;
 
 void menu_home() {
@@ -34,6 +45,10 @@ void menu_home() {
   }
 }
 
+/**
+ * \brief A function that generates the sub menus.
+ * This function will generate every menu below the main / home menu. 
+ */
 void generate_sub_menu() {
   OLED_goto_line(0);
   OLED_set_font(8);

@@ -27,8 +27,8 @@ uint8_t MCP_reads(uint8_t address){
   PORTB &= ~(1<<DD_SS); // Select CAN-controller
   SPI_transmit(MCP_READ); // Send read instruction
   SPI_transmit(address); // Send address
-  SPI_transmit(0xFF);
-  SPI_transmit(0xFF);
+  SPI_transmit(0xFF);   // Send dummy byte
+  SPI_transmit(0xFF);   // Send dummy byte another time to give more time to MCU...
   result = SPI_receive(); // Read result
   PORTB |= (1<<DD_SS); // DeselectCAN-controller
 

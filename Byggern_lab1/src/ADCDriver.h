@@ -33,11 +33,12 @@ void joy_cal(void);
 
 /**
  * \brief A function that returns the direction that the joystick is being pushed.
- * \return Returns a Direction (specified by the Direction enum) wich can be [LEFT, RIGH, UP, DOWN].
+ * \return Returns a Direction (specified by the Direction enum) which can be [LEFT, RIGH, UP, DOWN].
  */
 Direction joy_dir(void);
 
 /**
- * \brief A function that returns the percentage of change in the joystick.
+ * \brief A function that calculates the percentage displacement of the joystick in the X- and Y-axis.
+ * \return Returns a Percentage struct containing the percentages of joystick displacement from the center.
  */
 struct Percentage joy_pos(void);
