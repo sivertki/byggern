@@ -44,6 +44,7 @@
 #include <avr/pgmspace.h>
 #include "SPIDriver.h" //TODO remove and replace with can driver
 #include "MCP2515.h" //TODO remove when not needed anymore
+#include "CANDriver.h"
 
 
 
@@ -93,28 +94,49 @@ int main (void)
 	printf("Init complete.\n\r");
 	PORTB |= (1<<DD_SS);
 
+  /*
+	PORTB &= ~(1<<DD_SS);
+	SPI_transmit(MCP_WRITE);
+	SPI_transmit(MCP_RXF0SIDH);
+	SPI_transmit(0b10101010);
+	PORTB |= (1<<DD_SS);
+
 	printf("Setting SS low\n\r");
 	PORTB &= ~(1<<DD_SS);
 	printf("Starting transmit...\n\r");
 	SPI_transmit(MCP_READ);
 	printf("Instruction sent.\n\r");
-	SPI_transmit(MCP_CANSTAT);
+	SPI_transmit(MCP_RXF0SIDH);
 	printf("Init address sent.\n\r");
 	SPI_transmit(0xFF);
-	printf("Innhold i CANSTAT: %c\n\r", SPI_receive());
+	printf("Innhold i CANSTAT: %d\n\r", SPI_receive());
 	PORTB |= (1<<DD_SS);
+	*/
 
-	PORTB |= (1<<DD_SS);
-	SPI_transmit(MCP_WRITE);
-	SPI_transmit(CANCTRL);
-	SPI_transmit(MODE_LOOPBACK);
-	PORTB |= (1<<DD_SS);
+	//printf("Innhold i CANSTAT: %d\n\r", MCP_reads(MCP_RXF0SIDH));
+
+	can_init();
+
+	struct CANMessage testMessage;
+
+	testMessage.id = 1;
+	testMessage.length = 2;
+	testMessage.data[0] = 0b10101010;
+	testMessage.data[1] = 0b11001010;
+
+	struct CANMessage receiveMessage;
 
 	while(1) {
 
-		MCP_writes()
 
+		can_message_send(&testMessage);
 
+		receiveMessage = can_data_receive();
+
+		printf("%u\n\r", receiveMessage.data[0]);
+		printf("%u\n\r", receiveMessage.data[1]);
+
+		_delay_ms(2000);
 
 		/*
 		struct QuadChannel in;

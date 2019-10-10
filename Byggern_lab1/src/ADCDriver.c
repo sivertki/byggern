@@ -14,7 +14,7 @@
 #define CHAN1_SELECT 0x0004 // Select the left slider value stored in the ADC partition of the SRAM.
 #define CHAN2_SELECT 0x0005 // Select the right slider value stored in the ADC partition of the SRAM.
 #define CHAN3_SELECT 0x0006 // Select the value for the Y-axis of the joystick stored in the ADC partition of the SRAM.
-#define CHAN4_SELECT 0x0007// Select the value for the X-axis of the joystick stored in the ADC partition of the SRAM.
+#define CHAN4_SELECT 0x0007 // Select the value for the X-axis of the joystick stored in the ADC partition of the SRAM.
 
 /**
  * \brief A function

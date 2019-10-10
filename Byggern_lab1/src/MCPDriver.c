@@ -12,7 +12,7 @@ uint8_t MCP_init(){
   MCP_reset();
   // Send reset-command
   // Self-test
-  MCP_READ(MCP_CANSTAT, &value);
+  MCP_reads(MCP_CANSTAT, &value);
   if((value& MODE_MASK)  != MODE_CONFIG) {
     printf(”MCP2515 is NOT in configurationmode afterreset!\n”);
     return 1;
@@ -22,13 +22,14 @@ uint8_t MCP_init(){
 }
 */
 
+
 uint8_t MCP_reads(uint8_t address){
   uint8_t result;
   PORTB &= ~(1<<DD_SS); // Select CAN-controller
   SPI_transmit(MCP_READ); // Send read instruction
   SPI_transmit(address); // Send address
   SPI_transmit(0xFF);   // Send dummy byte
-  SPI_transmit(0xFF);   // Send dummy byte another time to give more time to MCU...
+  // SPI_transmit(0xFF);   // Send dummy byte another time to give more time to MCU...
   result = SPI_receive(); // Read result
   PORTB |= (1<<DD_SS); // DeselectCAN-controller
 
