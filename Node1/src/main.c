@@ -125,16 +125,22 @@ int main (void)
 	testMessage.data[1] = 0b11001010;
 
 	struct CANMessage receiveMessage;
+	struct QuadChannel qc;
 
 	while(1) {
 
+		qc = get_adc_values();
 
+		testMessage.data[0] = qc.chan3;
+		testMessage.data[1] = qc.chan4;
+		printf("chan3: %u\n\r", testMessage.data[0]);
+		printf("chan4: %u\n\r", testMessage.data[1]);
 		can_message_send(&testMessage);
 
-		receiveMessage = can_data_receive();
+		//receiveMessage = can_data_receive();
 
-		printf("%u\n\r", receiveMessage.data[0]);
-		printf("%u\n\r", receiveMessage.data[1]);
+		//printf("%u\n\r", receiveMessage.data[0]);
+		//printf("%u\n\r", receiveMessage.data[1]);
 
 		_delay_ms(2000);
 

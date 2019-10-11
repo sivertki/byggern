@@ -91,3 +91,16 @@ void MCP_reset() {
   SPI_transmit(MCP_RESET);
   PORTB |= (1<<DD_SS);
 }
+
+uint8_t MCP_readRX() {
+  uint8_t result;
+  PORTB &= ~(1<<DD_SS); // Select CAN-controller
+  SPI_transmit(MCP_READ_RX0); // Send readRX instruction
+  //SPI_transmit(address); // Send address
+  SPI_transmit(0xFF);   // Send dummy byte
+  // SPI_transmit(0xFF);   // Send dummy byte another time to give more time to MCU...
+  result = SPI_receive(); // Read result
+  PORTB |= (1<<DD_SS); // DeselectCAN-controller
+
+  return result;
+}

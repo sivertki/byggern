@@ -8,7 +8,7 @@
 /**
 * \brief Defining the clock speed of the ATMega162.
 */
-#define FOSC 4915200
+#define FOSC 16000000
 
 /**
 * \brief Defining the baud rate of the communication with the PC.
@@ -18,7 +18,7 @@
 /**
 * \brief  FOSC/16/BAUD - 1
 */
-#define MYUBRR 31
+#define MYUBRR 103
 
 /**
  * \brief A function that initilaizes USART communication
