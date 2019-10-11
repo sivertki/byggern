@@ -2,10 +2,14 @@
 #include <avr/io.h>
 #include <util/delay.h>
 
+#include "SPIDriver2.h"
+
 
 int main (void) {
-  //set pin49 as output
+  // Set pin49 as output
   DDRL |= (1<<PL0);
+
+  SPI_init();
 
   while(1) {
 
