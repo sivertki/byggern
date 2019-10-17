@@ -1,13 +1,13 @@
 /**
- * \file SPIDriver.h
- * \brief A file that facilitates the SPI communication between the MCP2515 and the ATMega162. 
+ * \file SPIDriver2.h
+ * \brief A file that facilitates the SPI communication between the I/O board and the Arduino Mega2560.
  */
 
 #define DDR_SPI DDRB
-#define DD_SS PB4
-#define DD_MOSI PB5
-#define DD_MISO PB6
-#define DD_SCK PB7
+#define DD_SS PB7
+#define DD_MOSI PB2
+#define DD_MISO PB3
+#define DD_SCK PB1
 
 /**
  * \brief A function that initilaizes the SPI communication on the ATMega162.

@@ -1,13 +1,18 @@
 # List all source files to be compiled; separate with space
-SOURCE_FILES := main.c
+SOURCE_FILES := main.c MCPDriver2.c SPIDriver2.c UARTDriver2.c CANDriver.c
 
 # Set this flag to "yes" (no quotes) to use JTAG; otherwise ISP (SPI) is used
 PROGRAM_WITH_JTAG := no
+PROGRAM_WITH_USB := yes
 
 # Feel free to ignore anything below this line
 PROGRAMMER := atmelice_isp
 ifeq ($(PROGRAM_WITH_JTAG), yes)
 	PROGRAMMER := atmelice
+endif
+
+ifeq ($(PROGRAM_WITH_USB), yes)
+	PROGRAMMER := arduino
 endif
 
 BUILD_DIR := build
@@ -33,7 +38,7 @@ $(BUILD_DIR)/main.hex: $(OBJECT_FILES) | $(BUILD_DIR)
 
 .PHONY: flash
 flash: $(BUILD_DIR)/main.hex
-	avrdude -p $(TARGET_DEVICE) -c $(PROGRAMMER) -U flash:w:$(BUILD_DIR)/main.hex:i
+	avrdude -p $(TARGET_DEVICE) -c $(PROGRAMMER) -b 9600 -U flash:w:$(BUILD_DIR)/main.hex:i
 
 .PHONY: fuse
 fuse:

@@ -1,5 +1,6 @@
 /**
- * \file A file
+ * \file MCPDriver2.h
+ * \brief A file
  */
 
 #include <stdio.h>

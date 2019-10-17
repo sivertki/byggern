@@ -39,6 +39,7 @@ struct CANMessage can_data_receive() {
       returnMessage.data[i] = MCP_reads(RXB0D0 + i);
   }
 
+  MCP_writes(MCP_CANINTF, 0x00);
   return returnMessage;
 }
 
