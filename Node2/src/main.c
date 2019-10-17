@@ -6,6 +6,8 @@
 #include "MCPDriver2.h"
 #include "CANDriver.h"
 #include "UARTDriver2.h"
+#include "ServoDriver.h"
+#include "avr/interrupt.h"
 
 
 int main (void) {
@@ -15,7 +17,8 @@ int main (void) {
   USART_Init();
   SPI_init();
   can_init();
-
+  servoInit();
+  sei();
   struct CANMessage receivedMessage;
 
   while(1) {
@@ -29,19 +32,19 @@ int main (void) {
     _delay_ms(1000);
     */
 
-
+    /*
     printf("Received data: %s\n\r");
     receivedMessage = can_data_receive();
     _delay_ms(100);
     printf("%u\n\r", receivedMessage.data[0]);
-
+    */
     /*
     uint8_t canstatInfo = (MCP_reads(MCP_CANSTAT)>>1) & 0b0000111;
 
     if(canstatInfo == )
     */
     _delay_ms(1000);
-
+    printf("%d\n\r", TCNT1);
   }
 
 }
