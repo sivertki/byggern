@@ -20,7 +20,7 @@ int main (void) {
   servoInit();
   sei();
   struct CANMessage receivedMessage;
-
+  uint8_t joystickval;
   while(1) {
 
     //set high
@@ -32,19 +32,18 @@ int main (void) {
     _delay_ms(1000);
     */
 
-    /*
-    printf("Received data: %s\n\r");
     receivedMessage = can_data_receive();
-    _delay_ms(100);
-    printf("%u\n\r", receivedMessage.data[0]);
-    */
+    printf("Received data: %u", receivedMessage.data[0]);
+    printf(" Scaled value: %hu\n\r", getScaledSensorValue(receivedMessage.data[0]));
+    SERVO_SetDutyCycle(receivedMessage.data[0]);
     /*
     uint8_t canstatInfo = (MCP_reads(MCP_CANSTAT)>>1) & 0b0000111;
 
     if(canstatInfo == )
     */
-    _delay_ms(1000);
-    printf("%d\n\r", TCNT1);
+
+    _delay_ms(200);
+
   }
 
 }

@@ -142,7 +142,7 @@ int main (void)
 		//printf("%u\n\r", receiveMessage.data[0]);
 		//printf("%u\n\r", receiveMessage.data[1]);
 
-		_delay_ms(2000);
+		_delay_ms(300);
 
 		/*
 		struct QuadChannel in;
