@@ -42,8 +42,8 @@
 #include "OLEDDriver.h"
 #include "MenuSystem.h"
 #include <avr/pgmspace.h>
-#include "SPIDriver.h" //TODO remove and replace with can driver
-#include "MCP2515.h" //TODO remove when not needed anymore
+//#include "SPIDriver.h" //TODO remove and replace with can driver
+//#include "MCP2515.h" //TODO remove when not needed anymore
 #include "CANDriver.h"
 
 
