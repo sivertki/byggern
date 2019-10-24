@@ -9,6 +9,7 @@
 #include "ServoDriver.h"
 #include "avr/interrupt.h"
 #include "IRDriver.h"
+#include "MotorDriver.h"
 
 
 
@@ -21,6 +22,7 @@ int main (void) {
   can_init();
   servoInit();
   IR_init();
+  MOTOR_initialize();
   sei();
 
   struct CANMessage receivedMessage;
@@ -46,10 +48,12 @@ int main (void) {
       //printf("No goal.\n\r");
     }
     //printf("\n\r");
-    //receivedMessage = can_data_receive();
+    receivedMessage = can_data_receive();
     //printf("Received data: %u", receivedMessage.data[0]);
     //printf(" Scaled value: %hu\n\r", getScaledSensorValue(receivedMessage.data[0]));
-    //SERVO_SetDutyCycle(receivedMessage.data[0]);
+    SERVO_SetDutyCycle(receivedMessage.data[0]);
+    MOTOR_setMovement(receivedMessage.data[1]);
+
     //ADCVal = IR_read();
 
     //printf("ADCVal : %u\n\r", ADCVal);

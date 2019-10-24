@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include "ServoDriver.h"
 
-//sets OC0B, pin 1 on Atmega2560, pin 4 on SHIELD, as pwm output
+//sets OC1A, pin 24 on Atmega2560, pin 11 on SHIELD, as pwm output
 void servoInit(){
   // Set pin as output.
   DDRB |= 1<<PB5;
