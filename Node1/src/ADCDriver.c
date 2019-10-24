@@ -110,7 +110,7 @@ void joy_cal() {
 
      printf("Calibration complete. Center Y = %d & Center X = %d\n\r", yCenter, xCenter);
 
-     _delay_ms(500);
+     //_delay_ms(500);
  }
 
 Direction joy_dir() {

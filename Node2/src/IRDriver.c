@@ -45,11 +45,11 @@ int IR_detect_goal(){
     uint16_t adc_val_sum = 0;
     for(int i = 0; i < 5; i++) {
       adc_val_sum += IR_read();
-      printf("adc_val_sum: %hu\n\r", adc_val_sum);
+      //printf("adc_val_sum: %hu\n\r", adc_val_sum);
       _delay_ms(50);
     }
     uint16_t average = adc_val_sum / 5;
-    printf("Avreage: %hu\n\r", average);
+    //printf("Avreage: %hu\n\r", average);
     if(average < GOAL_THRESHOLD){
       //printf("average: %u\n\r", adc_val_sum / 5);
       return 1;

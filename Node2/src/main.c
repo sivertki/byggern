@@ -10,6 +10,7 @@
 #include "avr/interrupt.h"
 #include "IRDriver.h"
 #include "MotorDriver.h"
+#include "Controller.h"
 
 
 
@@ -28,6 +29,7 @@ int main (void) {
   struct CANMessage receivedMessage;
   uint8_t joystickval;
   int result;
+  short int encoder_value;
   while(1) {
 
     //set high
@@ -48,11 +50,14 @@ int main (void) {
       //printf("No goal.\n\r");
     }
     //printf("\n\r");
-    receivedMessage = can_data_receive();
+    //receivedMessage = can_data_receive();
     //printf("Received data: %u", receivedMessage.data[0]);
     //printf(" Scaled value: %hu\n\r", getScaledSensorValue(receivedMessage.data[0]));
-    SERVO_SetDutyCycle(receivedMessage.data[0]);
-    MOTOR_setMovement(receivedMessage.data[1]);
+    //SERVO_SetDutyCycle(receivedMessage.data[0]);
+    //MOTOR_setMovement(receivedMessage.data[1]);
+    encoder_value = MOTOR_getEncoderValue();
+
+    printf("Encoder value: %hi\n\r", encoder_value);
 
     //ADCVal = IR_read();
 
@@ -63,7 +68,7 @@ int main (void) {
     if(canstatInfo == )
     */
 
-    _delay_ms(200);
+    _delay_ms(20);
 
   }
 
