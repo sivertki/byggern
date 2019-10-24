@@ -33,17 +33,18 @@
 
 #include <avr/io.h>
 #include <util/delay.h>
+
 //#include <board.h>
 //#include <asf.h>
 //#include "ASF/common/boards/board.h"
+#include "SPIDriver.h"
+#include "MCPDriver.h"
 #include "UARTDriver.h"
 #include "SRAMDriver.h"
 #include "ADCDriver.h"
 #include "OLEDDriver.h"
 #include "MenuSystem.h"
 #include <avr/pgmspace.h>
-//#include "SPIDriver.h" //TODO remove and replace with can driver
-//#include "MCP2515.h" //TODO remove when not needed anymore
 #include "CANDriver.h"
 
 
@@ -70,6 +71,7 @@ int main (void)
 	SRAM_init();
 
 
+
 	// Running calibration function on the joystick.
 	//joy_cal();
 
@@ -93,6 +95,8 @@ int main (void)
 	SPI_init();
 	printf("Init complete.\n\r");
 	PORTB |= (1<<DD_SS);
+
+	MCP_init();
 
   /*
 	PORTB &= ~(1<<DD_SS);
@@ -128,7 +132,7 @@ int main (void)
 	struct QuadChannel qc;
 
 	while(1) {
-
+		/*
 		qc = get_adc_values();
 
 		testMessage.data[0] = qc.chan3;
@@ -136,7 +140,7 @@ int main (void)
 		printf("chan3: %u\n\r", testMessage.data[0]);
 		printf("chan4: %u\n\r", testMessage.data[1]);
 		can_message_send(&testMessage);
-
+*/
 		//receiveMessage = can_data_receive();
 
 		//printf("%u\n\r", receiveMessage.data[0]);
