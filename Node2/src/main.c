@@ -13,8 +13,8 @@
 #include "Controller.h"
 #include "MCP2515.h"
 
-short int scaleJoystickSpeed(uint8_t joystickIn);
 void joy_cal();
+short int scaleJoystickSpeed(uint8_t joystickIn);
 
 int xCenter = 0;
 int yCenter = 0;
@@ -36,7 +36,8 @@ int main (void) {
   CONTROLLER_Init();
   MCP_init();
   joy_cal();
-  CONTROLLER_setControlTerms(1.0,0.0,0.02);
+  //TODO tune dis sjiiiit
+  CONTROLLER_setControlTerms(1.0,0.01,1.0);
   K_p = getTerm(1);
   K_i = getTerm(2);
   K_d = getTerm(3);
@@ -98,19 +99,7 @@ int main (void) {
   }
 }
 
-short int scaleJoystickSpeed(uint8_t joystickIn) {
-  if(joystickIn < xCenter *0.8) {
-    float motorSpeed = 255 - 2*joystickIn;
-    return (short int) (- motorSpeed);
-  }
-  else if(joystickIn > xCenter *1.2) {
-    float motorSpeed = 40 + 2.5*(joystickIn-170);
-    return  (short int) motorSpeed;
-  }
-  else {
-    return 0;
-  }
-}
+
 
 void joy_cal() {
      struct CANMessage receivedMessage;
@@ -124,12 +113,23 @@ void joy_cal() {
      //_delay_ms(500);
  }
 
-ISR(TIMER3_OVF_vect) {
-   PORTL ^= (1<<PL6);
+short int scaleJoystickSpeed(uint8_t joystickIn) {
+   if(joystickIn < xCenter *0.8) {
+     float motorSpeed = 255 - 2*joystickIn;
+     return (short int) (- motorSpeed);
+   }
+   else if(joystickIn > xCenter *1.2) {
+     float motorSpeed = 40 + 2.5*(joystickIn-170);
+     return  (short int) motorSpeed;
+   }
+   else {
+     return 0;
+   }
  }
 
 struct CANMessage receivedMessage;
 uint8_t joystickval;
+short int new_refrerence;
 ISR(INT4_vect) {
   //printf("Message interrupt!!!\n\r");
 
@@ -141,34 +141,33 @@ ISR(INT4_vect) {
   uint8_t bufferZero = int_flags & 0b01;
   uint8_t bufferOne = int_flags & 0b10;
 
+  //short int scaledJoystickValue;
 
-  int result;
-  short int encoder_value;
-  short int error;
-  short int scaledJoystickValue;
-  short int u;
 
   if(bufferZero) {
     //TODO
     receivedMessage = can_data_receive();
     //printf("Received data: %u\r\n", receivedMessage.data[0]);
     joystickval = receivedMessage.data[1];
+    new_refrerence = scaleJoystickSpeed(joystickval);
+    CONTROLLER_setReference(new_refrerence);
     //printf(" Scaled value: %hu\n\r", getScaledSensorValue(receivedMessage.data[0]));
     //SERVO_SetDutyCycle(receivedMessage.data[0]);
     //MOTOR_setMovement(receivedMessage.data[1]);
 
-    encoder_value = MOTOR_getEncoderValue();
-    scaledJoystickValue = scaleJoystickSpeed(joystickval);
-    //printf("Scaled joystick value: %hi , ", scaledJoystickValue);
-    error = CONTROLLER_calculateError(scaledJoystickValue, encoder_value);
-    //printf("Error: %hi, ", error);
-    u = CONTROLLER_calculateOutput(error);
-    //printf("Controller output: %hi\n\r", u);
-    MOTOR_setMovement(u);
+
   } else if(bufferOne) {
     //TODO
   }
 
   //clear interrupt flag
   EIFR &= ~(1<<4);
+}
+
+ISR(TIMER3_OVF_vect) {
+   CONTROLLER_updateController();
+ }
+
+ISR(BADISR_vect){
+  printf("BAD INTERRUPT!\n\r");
 }

@@ -1,5 +1,6 @@
 #include "Controller.h"
 #include "MotorDriver.h"
+#include <avr/io.h>
 volatile float K_i;
 volatile float K_p;
 volatile float K_d;
@@ -7,7 +8,10 @@ volatile float T_PID;
 volatile short int error_sum;
 volatile short int last_error;
 volatile short int reference_value;
-#include <avr/io.h>
+
+volatile short int encoder_value;
+volatile short int error;
+volatile short int u;
 
 void CONTROLLER_Init() {
   CONTROLLER_setControlTerms(1,1,1);
@@ -25,10 +29,10 @@ void CONTROLLER_Init() {
   TIMSK3 |= (1<<0);
 
   //TODO remove::
-  DDRL |= (1<<PL6);
+  //DDRL |= (1<<PL6);
 }
 
-short int CONTROLLER_calculateError(short int reference_value, short int  measured_value) {
+short int CONTROLLER_calculateError(short int  measured_value) {
    return reference_value - measured_value;
  }
 
@@ -50,6 +54,24 @@ short int CONTROLLER_calculateOutput(short int error) {
   return (short int)output;
 }
 
+void CONTROLLER_updateController() {
+  //PORTL ^= (1<<PL6);
+  encoder_value = MOTOR_getEncoderValue();
+  //scaledJoystickValue = scaleJoystickSpeed(joystickval);
+  //printf("Scaled joystick value: %hi , ", scaledJoystickValue);
+  error = CONTROLLER_calculateError(encoder_value);
+  //printf("Error: %hi, ", error);
+  u = CONTROLLER_calculateOutput(error);
+  //printf("Controller output: %hi\n\r", u);
+  MOTOR_setMovement(u);
+}
+
+
+void CONTROLLER_setReference(short int in){
+  reference_value = in;
+}
+
+//TODO remove this ugly shit
 int getTerm(int n) {
   if(n == 1) {
     return (int) K_p;
