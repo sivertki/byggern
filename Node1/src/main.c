@@ -46,7 +46,7 @@
 #include "MenuSystem.h"
 #include <avr/pgmspace.h>
 #include "CANDriver.h"
-
+#include "MCP2515.h"
 
 
 #define BASE_ADDRESS 0x1000
@@ -132,21 +132,21 @@ int main (void)
 	struct QuadChannel qc;
 
 	while(1) {
-		/*
+
 		qc = get_adc_values();
 
 		testMessage.data[0] = qc.chan3;
 		testMessage.data[1] = qc.chan4;
-		printf("chan3: %u\n\r", testMessage.data[0]);
-		printf("chan4: %u\n\r", testMessage.data[1]);
+		//printf("chan3: %u\n\r", testMessage.data[0]);
+		//printf("chan4: %u\n\r", testMessage.data[1]);
 		can_message_send(&testMessage);
-*/
+
 		//receiveMessage = can_data_receive();
 
 		//printf("%u\n\r", receiveMessage.data[0]);
 		//printf("%u\n\r", receiveMessage.data[1]);
 
-		_delay_ms(300);
+		_delay_ms(50);
 
 		/*
 		struct QuadChannel in;
@@ -169,4 +169,22 @@ int main (void)
 
 	}
 
+}
+
+ISR(INT0_vect) {
+  printf("Message interrupt!!!\n\r");
+
+  uint8_t int_flags = MCP_reads(MCP_CANINTF);
+
+  uint8_t bufferZero = int_flags & 0b01;
+  uint8_t bufferOne = int_flags & 0b10;
+
+  if(bufferZero) {
+    //TODO
+  } else if(bufferOne) {
+    //TODO
+  }
+
+  //clear interrupt flag
+  GIFR &= ~(1<<3);
 }

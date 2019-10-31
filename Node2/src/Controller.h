@@ -5,5 +5,7 @@
 #include <stdio.h>
 
 void CONTROLLER_Init();
-short int CONTORLLER_calculateError(uint8_t reference_value, short int  measured_value);
+short int CONTORLLER_calculateError(short int reference_value, short int  measured_value);
 short int CONTROLLER_calculateOutput(short int error);
+void CONTROLLER_setControlTerms(float p, float i, float d);
+int getTerm(int n);

@@ -8,7 +8,7 @@
 /**
  * \brief A function that initilaizes the MCP2515.
 */
-uint8_t MCP_init();
+void MCP_init();
 
 /**
  * \brief A function that reads an 8-bit value from the register specified in the parameter.

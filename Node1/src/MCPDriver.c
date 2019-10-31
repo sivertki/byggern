@@ -28,27 +28,10 @@ void MCP_init() {
   //Enable external interrupts for INT0 for ATMega162
   MCUCR &= ~(1<<ISC01 | 1<<ISC00);
   GICR |= (1<<6);
-  sei();
 }
+/*
 
-ISR(INT0_vect) {
-  printf("Message interrupt!!!\n\r");
-
-  uint8_t int_flags = MCP_reads(MCP_CANINTF);
-
-  uint8_t bufferZero = int_flags & 0b01;
-  uint8_t bufferOne = int_flags & 0b10;
-
-  if(bufferZero) {
-    //TODO
-  } else if(bufferOne) {
-    //TODO
-  }
-
-  //clear interrupt flag
-  GIFR &= ~(1<<3);
-}
-
+*/
 uint8_t MCP_reads(uint8_t address){
   uint8_t result;
   PORTB &= ~(1<<DD_SS); // Select CAN-controller

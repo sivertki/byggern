@@ -22,6 +22,16 @@ uint8_t MCP_init(){
 }
 */
 
+void MCP_init() {
+  //Enable interrupt on MCP2515 for both receive buffers
+  MCP_bitModify(MCP_CANINTE, 0x03, 0x03); //address, mask , data
+  //Enable external interrupts for INT34for ATMega2560
+  EICRB &= ~(1<<ISC41 | 1<<ISC40);
+  EIMSK |= (1<<4);
+  //sei();
+}
+
+
 
 uint8_t MCP_reads(uint8_t address){
   uint8_t result;

@@ -1,6 +1,7 @@
 #include "MotorDriver.h"
 #include <avr/io.h>
 #include <util/delay.h>
+#include <stdlib.h>
 #define MOTOR_ADDRESS_WRITE 0b01010000
 #define MOTOR_ADDRESS_READ 0b01010001
 
@@ -29,11 +30,17 @@ void MOTOR_initialize() {
 }
 
 void MOTOR_setSpeed(uint8_t speed) {
+
   unsigned char I2CMessage[3];
   I2CMessage[0] = MOTOR_ADDRESS_WRITE;
   I2CMessage[1] = 0x00;
-  I2CMessage[2] = speed;
 
+  if(speed > 80) {
+    I2CMessage[2] = 80;
+  }
+  else {
+    I2CMessage[2] = speed;
+  }
   TWI_Start_Transceiver_With_Data(I2CMessage, 3);
 }
 
@@ -46,9 +53,15 @@ void MOTOR_setDirection(motorDirection dir) {
   }
 }
 
-void MOTOR_setMovement(uint8_t speed, motorDirection dir) {
-  MOTOR_setDirection(dir);
-  MOTOR_setSpeed(speed);
+void MOTOR_setMovement(short int controllerOutput) {
+  if(controllerOutput > 0) {
+    MOTOR_setDirection(MotorRight);
+  }
+  else {
+    MOTOR_setDirection(MotorLeft);
+  }
+  MOTOR_setSpeed((uint8_t) abs(controllerOutput));
+
 }
 
 short int MOTOR_getEncoderValue() {
@@ -77,12 +90,14 @@ short int MOTOR_getEncoderValue() {
   PORTH |= 1<<nOE;
 
   //Glue together MSB LSB
-  printf("MSB: %u, " , MSB);
-  printf("LSB: %u, " , LSB);
+  //printf("MSB: %u, " , MSB);
+  //printf("LSB: %u, " , LSB);
   encoder_value = MSB<<8 | LSB;
   return encoder_value;
 }
 
+
+/*
 void MOTOR_setMovement(uint8_t joystickIn) {
   if(joystickIn < 125) {
     MOTOR_setDirection(MotorLeft);
@@ -95,4 +110,6 @@ void MOTOR_setMovement(uint8_t joystickIn) {
   else {
     MOTOR_setSpeed(0);
   }
+
 }
+*/
