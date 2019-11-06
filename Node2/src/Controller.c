@@ -1,12 +1,34 @@
 #include "Controller.h"
 #include "MotorDriver.h"
 #include <avr/io.h>
+
+/**
+ * A float containing the coefficient for the integral part of the PID-regulator.
+ */
 volatile float K_i;
+/**
+ * A float containing the coefficient for the proportional part of the PID-regulator.
+ */
 volatile float K_p;
+/**
+ * A float containing the coefficient for the derivative part of the PID-regulator.
+ */
 volatile float K_d;
+/**
+ * A float containing the coefficient for the time step of the PID-regulator.
+ */
 volatile float T_PID;
+/**
+ * A float containing the sum of errors in the PID-regulator.
+ */
 volatile short int error_sum;
+/**
+ * A float containing the last error calculated.
+ */
 volatile short int last_error;
+/**
+ * A float containing the reference value that the PID-regulator is stearing towards.
+ */
 volatile short int reference_value;
 
 volatile short int encoder_value;
