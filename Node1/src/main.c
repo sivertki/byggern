@@ -144,7 +144,7 @@ int main (void)
 		can_message_send(&quadChannelMessage);
 
 		//receiveMessage = can_data_receive();
-		_delay_ms(50);
+		_delay_ms(100);
 		//Poll buttons
 
 

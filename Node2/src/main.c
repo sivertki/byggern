@@ -31,7 +31,7 @@ int main (void) {
   USART_Init();
   SPI_init();
   can_init();
-  servoInit();
+  SERVO_init();
   IR_init();
   MOTOR_initialize();
   CONTROLLER_Init();
@@ -39,11 +39,12 @@ int main (void) {
   SOLENOID_init();
   joy_cal();
   //TODO tune dis sjiiiit
-  CONTROLLER_setControlTerms(1.0,0.01,1.0);
-  K_p = getTerm(1);
-  K_i = getTerm(2);
-  K_d = getTerm(3);
-  printf("K_p: %i, K_i: %i, K_d: %i\n\r", K_p, K_i, K_d);
+  CONTROLLER_setControlTerms(0.25,0.01,0.35);
+  //0.2,0.005,0.1
+  //K_p = getTerm(1);
+  //K_i = getTerm(2);
+  //K_d = getTerm(3);
+  //printf("K_p: %i, K_i: %i, K_d: %i\n\r", K_p, K_i, K_d);
   printf("Node 2 initialized!\n\r");
   _delay_ms(1000);
   sei();
@@ -95,7 +96,7 @@ int main (void) {
 
     if(canstatInfo == )
     */
-    printf("Loop-idi-doop!\n\r");
+    //printf("Loop-idi-doop!\n\r");
     _delay_ms(2000);
 
   }
@@ -132,6 +133,7 @@ short int scaleJoystickSpeed(uint8_t joystickIn) {
 static struct CANMessage receivedMessage;
 static uint8_t joystickval;
 static short int new_refrerence;
+static uint8_t servoVal;
 ISR(INT4_vect) {
   //printf("Message interrupt!!!\n\r");
 
@@ -155,6 +157,9 @@ ISR(INT4_vect) {
         joystickval = receivedMessage.data[3];
         new_refrerence = scaleJoystickSpeed(joystickval);
         CONTROLLER_setReference(new_refrerence);
+        servoVal = receivedMessage.data[1];
+        SERVO_setDutyCycle(255 - servoVal); //To invert direction
+        printf("Error: %hi, ErrorSum: %hi\n\r", getError(), getErrorSum());
         break;
       case 2: //Button message, contains all buttons
         //check if joystick button is pressed

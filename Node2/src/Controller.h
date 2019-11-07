@@ -18,7 +18,7 @@ void CONTROLLER_Init();
 //short int CONTROLLER_calculateOutput(short int error);
 
 /**
- * \brief A function that 
+ * \brief A function that
 */
 void CONTROLLER_setControlTerms(float p, float i, float d);
 
@@ -33,4 +33,8 @@ void CONTROLLER_updateController();
 
 /**
 */
-int getTerm(int n);
+short int getErrorSum();
+
+short int getError();
+
+short int getOutput();

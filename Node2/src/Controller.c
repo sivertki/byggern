@@ -35,6 +35,11 @@ volatile short int encoder_value;
 volatile short int error;
 volatile short int u;
 
+volatile short int GLOBAL_output;
+volatile float output;
+
+volatile short int difference;
+
 void CONTROLLER_Init() {
   CONTROLLER_setControlTerms(1,1,1);
   T_PID = 1;
@@ -55,7 +60,14 @@ void CONTROLLER_Init() {
 }
 
 short int CONTROLLER_calculateError(short int  measured_value) {
-   return reference_value - measured_value;
+   difference = reference_value - measured_value;
+  if(difference < 28 && difference > -28) {
+    return 0;
+  }
+  else {
+    return difference;
+  }
+
  }
 
 void CONTROLLER_setControlTerms(float p, float i, float d) {
@@ -67,12 +79,13 @@ void CONTROLLER_setControlTerms(float p, float i, float d) {
 short int CONTROLLER_calculateOutput(short int error) {
   error_sum += error;
   //printf("PID values: %f, %f, %f \n\r", K_p, K_i, K_d);
-  float output;
-  output = (K_p * (float)error) + (T_PID * K_i * (float)error_sum) + ((K_d/T_PID) * ((float)error - (float)last_error));
+  //float output;
+  output = (K_p * (float)error) + (T_PID * K_i * ((float)error_sum)) + ((K_d/T_PID) * ((float)error - (float)last_error));
 
   //printf("float output: %f\n\r", output);
 
   last_error = error;
+  GLOBAL_output = (short int)output;
   return (short int)output;
 }
 
@@ -84,7 +97,7 @@ void CONTROLLER_updateController() {
   error = CONTROLLER_calculateError(encoder_value);
   //printf("Error: %hi, ", error);
   u = CONTROLLER_calculateOutput(error);
-  //printf("Controller output: %hi\n\r", u);
+
   MOTOR_setMovement(u);
 }
 
@@ -94,14 +107,15 @@ void CONTROLLER_setReference(short int in){
 }
 
 //TODO remove this ugly shit
-int getTerm(int n) {
-  if(n == 1) {
-    return (int) K_p;
-  }
-  else if(n == 2) {
-    return (int) K_i;
-  }
-  else if(n == 3) {
-    return (int) K_d;
-  }
+short int getErrorSum() {
+  return error_sum;
+}
+//TODO remove
+short int getError() {
+  return error;
+}
+
+//TODO remove
+short int getOutput() {
+  return GLOBAL_output;
 }

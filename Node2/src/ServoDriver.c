@@ -2,8 +2,10 @@
 #include <stdio.h>
 #include "ServoDriver.h"
 
+uint16_t getScaledSensorValue(uint8_t controlIn);
+
 //sets OC1A, pin 24 on Atmega2560, pin 11 on SHIELD, as pwm output
-void servoInit(){
+void SERVO_init(){
   // Set pin as output.
   DDRB |= 1<<PB5;
   // Set waveform generation to fast PWM
@@ -19,7 +21,7 @@ void servoInit(){
   OCR1A = 0x0FA0;
 }
 
-void SERVO_SetDutyCycle(uint8_t controlIn) {
+void SERVO_setDutyCycle(uint8_t controlIn) {
   uint16_t scaledValue = getScaledSensorValue(controlIn);
   if((scaledValue <= 4200) && ( scaledValue >= 1800)) {
     OCR1A = scaledValue;

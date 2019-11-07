@@ -35,8 +35,8 @@ void MOTOR_setSpeed(uint8_t speed) {
   I2CMessage[0] = MOTOR_ADDRESS_WRITE;
   I2CMessage[1] = 0x00;
 
-  if(speed > 80) {
-    I2CMessage[2] = 80;
+  if(speed > 100) {
+    I2CMessage[2] = 100;
   }
   else {
     I2CMessage[2] = speed;
@@ -60,8 +60,12 @@ void MOTOR_setMovement(short int controllerOutput) {
   else {
     MOTOR_setDirection(MotorLeft);
   }
-  MOTOR_setSpeed((uint8_t) abs(controllerOutput));
-
+  if(abs(controllerOutput) > 255) {
+    MOTOR_setSpeed(255);
+  }
+  else {
+    MOTOR_setSpeed((uint8_t) abs(controllerOutput));
+  }
 }
 
 short int MOTOR_getEncoderValue() {
