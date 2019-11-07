@@ -13,7 +13,8 @@ void main(){
     MCP_init();
     //SPI_init(); //is this needed? Needs to be included if so.
 
-
+    //TODO set in IO driver 
+    DDRC |= (1<<0);
 
     sei();
     while(1){
@@ -22,7 +23,7 @@ void main(){
 }
 
 ISR(INT0_vect){
-    
+    PORTC ^= ~(1<<0);
     uint8_t int_flags = MCP_reads(MCP_CANINTF);
 
     //clear interrupt flags in CAN controller
