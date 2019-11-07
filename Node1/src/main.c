@@ -47,12 +47,16 @@
 #include <avr/pgmspace.h>
 #include "CANDriver.h"
 #include "MCP2515.h"
+#include <avr/interrupt.h>
 
 
 #define BASE_ADDRESS 0x1000
 
+
+
 int main (void)
 {
+	cli();
 	volatile char *ext_dev = (char *) BASE_ADDRESS;
 	// Insert system clock initialization code here (sysclk_init()).
 
@@ -69,6 +73,7 @@ int main (void)
 
 	USART_Init();
 	SRAM_init();
+	ADC_interrupt_enable();
 
 
 
@@ -121,36 +126,34 @@ int main (void)
 
 	can_init();
 
-	struct CANMessage testMessage;
-
-	testMessage.id = 1;
-	testMessage.length = 2;
-	testMessage.data[0] = 0b10101010;
-	testMessage.data[1] = 0b11001010;
-
-	struct CANMessage receiveMessage;
+	struct CANMessage quadChannelMessage;
+	quadChannelMessage.id = 1;
+	quadChannelMessage.length = 4;
 	struct QuadChannel qc;
 
+	sei();
 	while(1) {
 
-		qc = get_adc_values();
+		//Poll ADCs
+		qc = ADC_get_adc_values();
 
-		testMessage.data[0] = qc.chan3;
-		testMessage.data[1] = qc.chan4;
-		//printf("chan3: %u\n\r", testMessage.data[0]);
-		//printf("chan4: %u\n\r", testMessage.data[1]);
-		can_message_send(&testMessage);
+		quadChannelMessage.data[0] = qc.chan1;
+		quadChannelMessage.data[1] = qc.chan2;
+		quadChannelMessage.data[2] = qc.chan3;
+		quadChannelMessage.data[3] = qc.chan4;
+		can_message_send(&quadChannelMessage);
 
 		//receiveMessage = can_data_receive();
+		_delay_ms(50);
+		//Poll buttons
+
 
 		//printf("%u\n\r", receiveMessage.data[0]);
 		//printf("%u\n\r", receiveMessage.data[1]);
 
-		_delay_ms(50);
-
 		/*
 		struct QuadChannel in;
-		in = get_adc_values();
+		in = get_adc_valueget_adc_valuess();
 		struct ButtonStruct butt;
 		butt = get_button_values();
 		*/
@@ -187,4 +190,22 @@ ISR(INT0_vect) {
 
   //clear interrupt flag
   GIFR &= ~(1<<3);
+}
+
+
+
+ISR(INT2_vect) {
+	printf("Button interrupt!\n\r");
+	struct CANMessage buttonMessage;
+	buttonMessage.id = 2;
+	buttonMessage.length = 1;
+	struct  ButtonStruct bs;
+
+	bs = ADC_get_button_values();
+	buttonMessage.data[0] = (bs.lb << 2) | (bs.rb << 1) | (bs.jb << 0);
+	can_message_send(&buttonMessage);
+}
+
+ISR(BADISR_vect){
+  printf("BAD INTERRUPT!\n\r");
 }

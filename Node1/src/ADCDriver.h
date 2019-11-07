@@ -6,6 +6,9 @@
 #include <stdio.h>
 #include "DEFINITIONS.h"
 
+void ADC_interrupt_enable();
+void ADC_interrupt_disable();
+
 /**
  * \brief A struct containing the percentage of movement in the joystick X/Y directions.
  */
@@ -18,13 +21,13 @@ struct Percentage {
  * \brief A function that returns the values of the sliders and the joystick positions.
  * \return Returns a QuadChannel struct containing the values of the sliders and joystick X/Y in range [0, 255].
  */
-struct QuadChannel get_adc_values(void);
+struct QuadChannel ADC_get_adc_values(void);
 
 /**
  * \brief A function that returns the values of the buttons on the P1000.
  * \return Returns a ButtonStruct struct containing the values of the buttons in boolean form [0, 1].
  */
-struct ButtonStruct get_button_values(void);
+struct ButtonStruct ADC_get_button_values(void);
 
 /**
  * \brief A function that calibrates the joystick center positions.

@@ -16,6 +16,16 @@
 #define CHAN3_SELECT 0x0006 // Select the value for the Y-axis of the joystick stored in the ADC partition of the SRAM.
 #define CHAN4_SELECT 0x0007 // Select the value for the X-axis of the joystick stored in the ADC partition of the SRAM.
 
+void ADC_interrupt_enable() {
+  //set up INT2 for joystick button
+  //EMCUCR |= (1<<0);
+  GICR |= (1<<5);
+}
+
+void ADC_interrupt_disable() {
+  GICR &= ~(1<<5);
+}
+
 /**
  * \brief A function
  */
@@ -35,27 +45,27 @@ int xCenter;
  */
 int yCenter;
 
-struct QuadChannel get_adc_values() {
+struct QuadChannel ADC_get_adc_values() {
     struct QuadChannel val;
     set_channel(1);
-    _delay_ms(40);
+    _delay_ms(5);
     val.chan1 = read_channel();
 
     set_channel(2);
-    _delay_ms(40);
+    _delay_ms(5);
     val.chan2 = read_channel();
 
     set_channel(3);
-    _delay_ms(40);
+    _delay_ms(5);
     val.chan3 = read_channel();
 
     set_channel(4);
-    _delay_ms(40);
+    _delay_ms(5);
     val.chan4 = read_channel();
     return val;
 }
 
-struct ButtonStruct get_button_values() {
+struct ButtonStruct ADC_get_button_values() {
     struct ButtonStruct buttonValue;
 
     uint8_t read_port_b = PINB;
@@ -103,7 +113,7 @@ uint8_t read_channel(void) {
  }
 
 void joy_cal() {
-     struct QuadChannel joy_values = get_adc_values();
+     struct QuadChannel joy_values = ADC_get_adc_values();
 
      yCenter = joy_values.chan3;
      xCenter = joy_values.chan4;
@@ -114,7 +124,7 @@ void joy_cal() {
  }
 
 Direction joy_dir() {
-   struct QuadChannel joy_values = get_adc_values();
+   struct QuadChannel joy_values = ADC_get_adc_values();
 
     if(joy_values.chan3 >= yCenter*1.6) {
          //printf("UP\n\r");

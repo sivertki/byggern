@@ -12,16 +12,17 @@
 #include "MotorDriver.h"
 #include "Controller.h"
 #include "MCP2515.h"
+#include "SolenoidDriver.h"
 
 void joy_cal();
 short int scaleJoystickSpeed(uint8_t joystickIn);
 
-int xCenter = 0;
-int yCenter = 0;
+static int xCenter = 0;
+static int yCenter = 0;
 
-int K_p;
-int K_i;
-int K_d;
+static int K_p;
+static int K_d;
+static int K_i;
 
 int main (void) {
   cli();
@@ -35,6 +36,7 @@ int main (void) {
   MOTOR_initialize();
   CONTROLLER_Init();
   MCP_init();
+  SOLENOID_init();
   joy_cal();
   //TODO tune dis sjiiiit
   CONTROLLER_setControlTerms(1.0,0.01,1.0);
@@ -127,9 +129,9 @@ short int scaleJoystickSpeed(uint8_t joystickIn) {
    }
  }
 
-struct CANMessage receivedMessage;
-uint8_t joystickval;
-short int new_refrerence;
+static struct CANMessage receivedMessage;
+static uint8_t joystickval;
+static short int new_refrerence;
 ISR(INT4_vect) {
   //printf("Message interrupt!!!\n\r");
 
@@ -147,10 +149,22 @@ ISR(INT4_vect) {
   if(bufferZero) {
     //TODO
     receivedMessage = can_data_receive();
+
+    switch (receivedMessage.id) {
+      case 1: //Quad message, contains all ADC values
+        joystickval = receivedMessage.data[3];
+        new_refrerence = scaleJoystickSpeed(joystickval);
+        CONTROLLER_setReference(new_refrerence);
+        break;
+      case 2: //Button message, contains all buttons
+        //check if joystick button is pressed
+        if(receivedMessage.data[0] & 0b1) {
+          SOLENOID_fire();
+        }
+        break;
+    }
     //printf("Received data: %u\r\n", receivedMessage.data[0]);
-    joystickval = receivedMessage.data[1];
-    new_refrerence = scaleJoystickSpeed(joystickval);
-    CONTROLLER_setReference(new_refrerence);
+
     //printf(" Scaled value: %hu\n\r", getScaledSensorValue(receivedMessage.data[0]));
     //SERVO_SetDutyCycle(receivedMessage.data[0]);
     //MOTOR_setMovement(receivedMessage.data[1]);
