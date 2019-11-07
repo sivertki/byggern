@@ -1,6 +1,6 @@
 /**
  * \file MCPDriver2.h
- * \brief A file
+ * \brief A file that makes it possible to control the MCP2515.
  */
 
 #include <stdio.h>
