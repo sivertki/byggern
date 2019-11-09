@@ -14,12 +14,14 @@ void main(){
     MCP_init();
     //SPI_init(); //is this needed? Needs to be included if so.
 
-    //TODO set in IO driver
+    //TODO set in IO driver if to be used
     DDRC |= (1<<0);
-    PORTC |= (1<<0);
+
+
     sei();
     while(1){
         _delay_ms(2000);
+        //PORTC ^= (1<<0);
     }
 }
 
