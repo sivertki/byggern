@@ -34,27 +34,27 @@ void MCP_init() {
 */
 uint8_t MCP_reads(uint8_t address){
   uint8_t result;
-  PORTB &= ~(1<<DD_SS); // Select CAN-controller
+  //PORTB &= ~(1<<DD_SS); // Select CAN-controller
   SPI_transmit(MCP_READ); // Send read instruction
   SPI_transmit(address); // Send address
   SPI_transmit(0xFF);   // Send dummy byte
   // SPI_transmit(0xFF);   // Send dummy byte another time to give more time to MCU...
   result = SPI_receive(); // Read result
-  PORTB |= (1<<DD_SS); // DeselectCAN-controller
+  //PORTB |= (1<<DD_SS); // DeselectCAN-controller
 
   return result;
 }
 
 void MCP_writes(uint8_t address, uint8_t data) {
-  PORTB &= ~(1<<DD_SS);
+  //PORTB &= ~(1<<DD_SS);
   SPI_transmit(MCP_WRITE);
   SPI_transmit(address);
   SPI_transmit(data);
-  PORTB |= (1<<DD_SS);
+  //PORTB |= (1<<DD_SS);
 }
 
 void MCP_requestToSend(uint8_t select) {
-  PORTB &= ~(1<<DD_SS);
+  //PORTB &= ~(1<<DD_SS);
 
   switch (select) {
     case 0:
@@ -71,32 +71,32 @@ void MCP_requestToSend(uint8_t select) {
       break;
   }
 
-  PORTB |= (1<<DD_SS);
+  //PORTB |= (1<<DD_SS);
 
 }
 
 void MCP_bitModify(uint8_t address, uint8_t mask, uint8_t data) {
-  PORTB &= ~(1<<DD_SS);
+  //PORTB &= ~(1<<DD_SS);
   SPI_transmit(MCP_BITMOD);
   SPI_transmit(address);
   SPI_transmit(mask);
   SPI_transmit(data);
-  PORTB |= (1<<DD_SS);
+  //PORTB |= (1<<DD_SS);
 }
 
 uint8_t MCP_readStatus() {
   uint8_t temp;
-  PORTB &= ~(1<<DD_SS);
+  //PORTB &= ~(1<<DD_SS);
   SPI_transmit(MCP_READ_STATUS);
   SPI_transmit(0xFF);
   temp = SPI_receive();
   SPI_transmit(0xFF);
-  PORTB |= (1<<DD_SS);
+  //PORTB |= (1<<DD_SS);
   return temp;
 }
 
 void MCP_reset() {
-  PORTB &= ~(1<<DD_SS);
+  //PORTB &= ~(1<<DD_SS);
   SPI_transmit(MCP_RESET);
-  PORTB |= (1<<DD_SS);
+  //PORTB |= (1<<DD_SS);
 }
