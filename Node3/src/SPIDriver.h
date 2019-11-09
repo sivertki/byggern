@@ -4,7 +4,7 @@
  */
 
 #define DDR_SPI DDRB
-//#define DD_SS PB7
+#define DD_SS PB2
 #define DD_MOSI PB3
 #define DD_MISO PB4
 #define DD_SCK PB5

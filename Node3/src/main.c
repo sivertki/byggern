@@ -5,16 +5,19 @@
 #include "MCP2515.h"
 #include "MCPDriver.h"
 #include "CANDriver.h"
+#include "SPIDriver.h"
 
 volatile struct CANMessage receivedMessage;
 
 void main(){
     cli();
-    _delay_ms(1000);
+    _delay_ms(20);
     SPI_init();
+    _delay_ms(20);
     MCP_init();
+    _delay_ms(20);
     can_init(); //TODO name protocol
-    
+    _delay_ms(20);
     
 
     //TODO set in IO driver if to be used
