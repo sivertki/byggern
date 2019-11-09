@@ -10,9 +10,12 @@ volatile struct CANMessage receivedMessage;
 
 void main(){
     cli();
-    can_init(); //TODO name protocol
+    _delay_ms(1000);
+    SPI_init();
     MCP_init();
-    //SPI_init(); //is this needed? Needs to be included if so.
+    can_init(); //TODO name protocol
+    
+    
 
     //TODO set in IO driver if to be used
     DDRC |= (1<<0);
