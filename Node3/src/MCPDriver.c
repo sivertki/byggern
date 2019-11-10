@@ -23,6 +23,7 @@ uint8_t MCP_init(){
 }
 */
 void MCP_init() {
+  MCP_reset();
   //Enable interrupt on MCP2515 for both receive buffers
   MCP_bitModify(MCP_CANINTE, 0x03, 0x03); //address, mask , data
   //Enable external interrupts for INT0 for ATMega168
