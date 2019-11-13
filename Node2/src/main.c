@@ -39,7 +39,7 @@ int main (void) {
   SOLENOID_init();
   joy_cal();
   //TODO tune dis sjiiiit
-  CONTROLLER_setControlTerms(0.25,0.01,0.35);
+  CONTROLLER_setControlTerms(0.25,0.00,0.35);
   //0.2,0.005,0.1
   //K_p = getTerm(1);
   //K_i = getTerm(2);

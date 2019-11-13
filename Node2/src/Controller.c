@@ -60,8 +60,8 @@ void CONTROLLER_Init() {
 }
 
 short int CONTROLLER_calculateError(short int  measured_value) {
-   difference = reference_value - measured_value;
-  if(difference < 28 && difference > -28) {
+  difference =  measured_value - reference_value;
+  if(difference < 100 && difference > -100) {
     return 0;
   }
   else {
@@ -80,7 +80,7 @@ short int CONTROLLER_calculateOutput(short int error) {
   error_sum += error;
   //printf("PID values: %f, %f, %f \n\r", K_p, K_i, K_d);
   //float output;
-  output = (K_p * (float)error) + (T_PID * K_i * ((float)error_sum)) + ((K_d/T_PID) * ((float)error - (float)last_error));
+  output = -((K_p * (float)error) + (T_PID * K_i * ((float)error_sum)) + ((K_d/T_PID) * ((float)error - (float)last_error)));
 
   //printf("float output: %f\n\r", output);
 
