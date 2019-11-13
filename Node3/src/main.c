@@ -1,38 +1,36 @@
 #define F_CPU 4000000UL
 #include <avr/io.h>
 #include <util/delay.h>
-#include <avr/interrupt.h>
+//#include <avr/interrupt.h>
 #include "MCP2515.h"
-#include "MCPDriver.h"
-#include "CANDriver.h"
+//#include "MCPDriver.h"
+//#include "CANDriver.h"
 #include "SPIDriver.h"
 
-volatile struct CANMessage receivedMessage;
 
 void main(){
-    cli();
-    _delay_ms(20);
+    //cli();
     SPI_init();
-    _delay_ms(20);
-    MCP_init();
-    _delay_ms(20);
-    can_init(); //TODO name protocol
-    _delay_ms(20);
-    
 
-    //TODO set in IO driver if to be used
-    DDRC |= (1<<0);
+    //TODO IO pins used to blink LED, for heartbeat and testing
+    DDRC |= (1<<PC0)|(1<<PC3);
 
-
-    sei();
+    char a = 0xAA;
+    //sei();
     while(1){
-        _delay_ms(2000);
-        //PORTC ^= (1<<0);
+        //Heartbeat
+        PORTC ^= (1<<PC3);
+
+        //Transmit, but noting happens. SCK, MOSI pins don't change
+        SPI_transmit(a);
+        _delay_ms(1000);
     }
 }
 
+/*
 ISR(INT0_vect){
-    PORTC ^= ~(1<<0);
+    //PORTC |= (1<<PC3);
+    
     uint8_t int_flags = MCP_reads(MCP_CANINTF);
 
     //clear interrupt flags in CAN controller
@@ -49,7 +47,8 @@ ISR(INT0_vect){
     } else if(bufferOne) {
         //TODO. Maybe do the same as with buffer zero? just run an external function
     }
-
+    
     //clear interrupt flag
     EIFR &= ~(1<<0);
 }
+*/

@@ -1,7 +1,6 @@
 #include "CANDriver.h"
 #include "MCPDriver.h"
 #include "MCP2515.h"
-
 void can_init() {
   MCP_writes(MCP_CANCTRL, 0x0<<5);
 }
