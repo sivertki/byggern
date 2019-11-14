@@ -1,32 +1,105 @@
-#define F_CPU 4000000UL
+#define F_CPU 16000000UL
 #include <avr/io.h>
 #include <util/delay.h>
-//#include <avr/interrupt.h>
-#include "MCP2515.h"
+#include <stdio.h>
+#include <avr/interrupt.h>
+//#include "MCP2515.h"
 //#include "MCPDriver.h"
 //#include "CANDriver.h"
-#include "SPIDriver.h"
+//#include "SPIDriver.h"
 
+#define BAUD 9600
+#define MYUBBR 103 //TODO calculate FOSC/16/BAUD-1
 
-void main(){
-    //cli();
-    SPI_init();
+#define DDR_SPI DDRB
+#define DD_SS DDB2
+#define DD_MOSI DDB3
+#define DD_MISO DDB4
+#define DD_SCK DDB5
 
-    //TODO IO pins used to blink LED, for heartbeat and testing
-    DDRC |= (1<<PC0)|(1<<PC3);
-
-    char a = 0xAA;
-    //sei();
-    while(1){
-        //Heartbeat
-        PORTC ^= (1<<PC3);
-
-        //Transmit, but noting happens. SCK, MOSI pins don't change
-        SPI_transmit(a);
-        _delay_ms(1000);
-    }
+void SPI_transmit(char cData) {
+  /* Start transmission */
+  PORTB &= ~(1<<DD_SS);
+  SPDR = cData;
+  /* Wait for transmission complete */
+  while(!(SPSR & (1<<SPIF)));
+  SPSR &= ~(1<<SPIF);
+  //Flip LED for testing. It does flip, so code runs here
+  PORTB |= (1<<DD_SS);
+  
 }
 
+void SPI_init() {
+  /* Make sure power saving isn't blocking SPI*/
+  PRR &= ~(1<<PRSPI);
+  /* Set MOSI and SCK and SS as output, all others input */
+  DDR_SPI |= (1<<DD_MOSI)|(1<<DD_SCK)|(1<<DD_SS);
+  PORTB |= (1<<DD_SS);
+  PORTC |= (1<<PC0);
+  /* set MISO as input */
+  DDR_SPI &= ~(1<<DD_MISO);
+  /* Enable SPI, Master, set clock rate fck/16 */
+  SPCR = (1<<SPE)|(1<<MSTR)|(1<<SPR0)|(1<<SPR1);//|(1<<SPIE);
+
+}
+
+void UART_init() {
+    //set baud rate
+    UBRR0H = (unsigned char) (MYUBBR>>8);
+    UBRR0L = (unsigned char) MYUBBR;
+
+    // Enable receiver and transmitter
+	UCSR0B = (1 << RXEN0 ) | (1 << TXEN0);
+
+    // Set frame format: 8 data, 2 stop bit
+	UCSR0C = (1 << USBS0) | (3 << UCSZ00);
+
+}
+void UART_transmit ( unsigned char *data) {
+    uint8_t loop_var=0;
+    while(data[loop_var] != '\0') {
+        while(!(UCSR0A & (1<<UDRE0)));
+
+        UDR0 = data[loop_var];
+        loop_var ++;
+    }
+    while(!(UCSR0A & (1<<UDRE0)));
+    UDR0 = '\r';
+}
+
+void main(){
+    cli();
+    SPI_init();
+    UART_init();
+    char data_str[256];
+    sprintf(data_str, "SCR: %2x \n", SPCR);
+    sprintf(data_str, "SPDR: %2x, SPCR: %2x, SPSR: %2x\n", SPDR, SPCR, SPSR);
+    UART_transmit(data_str);
+    //TODO IO pins used to blink LED, for heartbeat and testing
+    DDRC |= (1<<PC0)|(1<<PC3);
+    DDRB |= (1<<PB0)|(1<<PB2);
+    char a = 0xAA;
+    
+    //sei();
+    while(1){
+        //PORTB ^= (1<<PB2);
+        //Transmit, but noting happens. SCK, MOSI pins don't change
+        SPI_transmit(a);
+        sprintf(data_str, "SPDR: %2x, SPCR: %2x, SPSR: %2x\n", SPDR, SPCR, SPSR);
+        UART_transmit(data_str);
+        a++;
+        _delay_ms(1000);
+        
+    }
+}
+/*
+ISR(SPI_STC_vect) {
+    //sprintf(data_str, "Transmit completed", SPDR, SPCR, SPSR);
+    //UART_transmit("data_str");
+    PORTB |= (1<<DD_SS);
+    PORTC ^= (1<<PC3);
+}
+*/
 /*
 ISR(INT0_vect){
     //PORTC |= (1<<PC3);

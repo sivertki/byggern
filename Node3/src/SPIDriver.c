@@ -4,11 +4,13 @@
 
 void SPI_transmit(char cData) {
   /* Start transmission */
+  PORTC &= ~(1<<PC0);
   SPDR = cData;
   /* Wait for transmission complete */
   while(!(SPSR & (1<<SPIF)));
   //Flip LED for testing. It does flip, so code runs here
-  PORTC ^= (1<<PC0);
+  PORTC |= (1<<PC0);
+  
 }
 
 void SPI_init() {
@@ -16,6 +18,8 @@ void SPI_init() {
   PRR &= ~(1<<PRSPI);
   /* Set MOSI and SCK and SS as output, all others input */
   DDR_SPI = (1<<DD_MOSI)|(1<<DD_SCK)|(1<<DD_SS);
+  PORTB |= (1<<DD_SS);
+  PORTC |= (1<<PC0);
   /* set MISO as input */
   DDR_SPI &= ~(1<<DD_MISO);
   /* Enable SPI, Master, set clock rate fck/16 */

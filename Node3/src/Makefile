@@ -1,5 +1,5 @@
 # List all source files to be compiled; separate with space
-SOURCE_FILES := main.c  SPIDriver.c #CANDriver.c MCPDriver.c
+SOURCE_FILES := main.c  #SPIDriver.c #CANDriver.c MCPDriver.c
 
 # Set this flag to "yes" (no quotes) to use JTAG; otherwise ISP (SPI) is used
 PROGRAM_WITH_JTAG := no
@@ -16,8 +16,8 @@ ifeq ($(PROGRAM_WITH_USB), yes)
 endif
 
 BUILD_DIR := build
-TARGET_CPU := atmega168
-TARGET_DEVICE := m168
+TARGET_CPU := atmega168p
+TARGET_DEVICE := m168p
 
 CC := avr-gcc
 CFLAGS := -O -std=c11 -mmcu=$(TARGET_CPU)
