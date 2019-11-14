@@ -5,23 +5,6 @@
 #include <avr/io.h>
 #include <avr/interrupt.h>
 
-/*
-uint8_t MCP_init(){
-  uint8_t value;
-  SPI_init();
-  // InitializeSPI
-  MCP_reset();
-  // Send reset-command
-  // Self-test
-  MCP_reads(MCP_CANSTAT, &value);
-  if((value& MODE_MASK)  != MODE_CONFIG) {
-    printf(”MCP2515 is NOT in configurationmode afterreset!\n”);
-    return 1;
-  }
-  // More initialization
-  return 0;
-}
-*/
 void MCP_init() {
   //MCP_reset();
   //Enable interrupt on MCP2515 for both receive buffers
@@ -35,12 +18,14 @@ void MCP_init() {
 */
 uint8_t MCP_reads(uint8_t address){
   uint8_t result;
+  PORTD &= ~(1<<PD4);
   //PORTB &= ~(1<<DD_SS); // Select CAN-controller
   SPI_transmit(MCP_READ); // Send read instruction
   SPI_transmit(address); // Send address
   SPI_transmit(0xFF);   // Send dummy byte
   // SPI_transmit(0xFF);   // Send dummy byte another time to give more time to MCU...
   result = SPI_receive(); // Read result
+  PORTD |= (1<<PD4);
   //PORTB |= (1<<DD_SS); // DeselectCAN-controller
 
   return result;
@@ -48,14 +33,17 @@ uint8_t MCP_reads(uint8_t address){
 
 void MCP_writes(uint8_t address, uint8_t data) {
   //PORTB &= ~(1<<DD_SS);
+  PORTD &= ~(1<<PD4);
   SPI_transmit(MCP_WRITE);
   SPI_transmit(address);
   SPI_transmit(data);
+  PORTD |= (1<<PD4);
   //PORTB |= (1<<DD_SS);
 }
 
 void MCP_requestToSend(uint8_t select) {
   //PORTB &= ~(1<<DD_SS);
+  PORTD &= ~(1<<PD4);
 
   switch (select) {
     case 0:
@@ -71,33 +59,39 @@ void MCP_requestToSend(uint8_t select) {
       SPI_transmit(MCP_RTS_ALL);
       break;
   }
-
+  PORTD |= (1<<PD4);
   //PORTB |= (1<<DD_SS);
 
 }
 
 void MCP_bitModify(uint8_t address, uint8_t mask, uint8_t data) {
   //PORTB &= ~(1<<DD_SS);
+  PORTD &= ~(1<<PD4);
   SPI_transmit(MCP_BITMOD);
   SPI_transmit(address);
   SPI_transmit(mask);
   SPI_transmit(data);
+  PORTD |= (1<<PD4);
   //PORTB |= (1<<DD_SS);
 }
 
 uint8_t MCP_readStatus() {
   uint8_t temp;
   //PORTB &= ~(1<<DD_SS);
+  PORTD &= ~(1<<PD4);
   SPI_transmit(MCP_READ_STATUS);
   SPI_transmit(0xFF);
   temp = SPI_receive();
   SPI_transmit(0xFF);
+  PORTD |= (1<<PD4);
   //PORTB |= (1<<DD_SS);
   return temp;
 }
 
 void MCP_reset() {
   //PORTB &= ~(1<<DD_SS);
+  PORTD &= ~(1<<PD4);
   SPI_transmit(MCP_RESET);
+  PORTD |= (1<<PD4);
   //PORTB |= (1<<DD_SS);
 }
