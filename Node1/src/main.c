@@ -15,10 +15,10 @@
 #include "CANDriver.h"
 #include "MCP2515.h"
 #include "IODriver.h"
+#include "DEFINITIONS.h"
 
 #define BASE_ADDRESS 0x1000
 
-enum state{MENU, SETTINGS, PINGPONG}
 static volatile currentState;
 
 int main (void)
@@ -56,9 +56,9 @@ int main (void)
 	ADCCANMessage.length = 4;
 	struct QuadADCChannels qc;
 
-	currentState = MENU;
-	Direction dir;
-	struct ButtonStruct butt;
+	static volatile currentState = MENU;
+	static volatile Direction dir;
+	static volatile struct ButtonStruct butt;
 
 	sei();
 	while(1) {
@@ -71,7 +71,7 @@ int main (void)
 
 				//For controlling menu.
 				//printf("direction: %d, button: %d\n\r", dir, butt.jb);
-				MENU_nav(dir, butt);
+				MENU_nav(dir, butt, currentState);
 
 				_delay_ms(100);
 				break;

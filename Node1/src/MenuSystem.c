@@ -1,5 +1,4 @@
 #include "OLEDDriver.h"
-#include "DEFINITIONS.h"
 #include "MenuSystem.h"
 #include <string.h>
 
@@ -49,7 +48,7 @@ void MENU_home() {
  * \brief A function that generates the sub menus.
  * This function will generate every menu below the main / home menu. 
  */
-void generate_sub_menu() {
+void generate_sub_menu() { //TODO maybe we should't prioritize to implement this
   OLED_goto_line(0);
   OLED_set_font(8);
   OLED_printf("----------------");
@@ -92,12 +91,13 @@ void menu_print_selected(char str[]) {
   OLED_printf("<");
 }
 
-void MENU_nav(Direction dir, struct ButtonStruct butt) {
+//TODO this needs major overhaul
+void MENU_nav(Direction dir, struct ButtonStruct butt, State state) {
   if(previous_direction == dir) {
     if (butt.jb && current_menu_selection != previous_menu_selection) {
       printf("%s\n\r", main_menu_items[current_menu_selection - 1]);
       previous_menu_selection = current_menu_selection;
-      generate_sub_menu();
+      //generate_sub_menu();
     }
     return;
   }
@@ -129,11 +129,23 @@ void MENU_nav(Direction dir, struct ButtonStruct butt) {
       //previous_direction = dir;
     break;
     case RIGHT:
+        //RIGHT means the menu item is selected. State needs to be changed accordingly.
         //printf("%s\n\r", main_menu_items[current_menu_selection - 1]);
-        generate_sub_menu();
+        //generate_sub_menu();
+        switch (state)
+        {
+          case MENU:
+            //TODO change state to fit the chosen setting
+            //Reprint OLED for new state
+            break;
+        
+          default:
+            break;
+        }
     break;
     case LEFT:
-        printf("%s\n\r", "LEFTINSWITCH");
+        //printf("%s\n\r", "LEFTINSWITCH");
+        //TODO should  be used to exit if not in main menu
     break;
   }
 

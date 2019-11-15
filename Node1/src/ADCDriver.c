@@ -111,18 +111,18 @@ Direction ADC_get_joystick_direction() {
     //TODO this does not work properly at all!!!
    struct QuadADCChannels joy_values = ADC_get_adc_values();
 
-    if(joy_values.chan3 >= yCenter*1.6) {
+    if(joy_values.chan3 >= yCenter*1.4) {
          //printf("UP\n\r");
          return(UP);
-    } else if(joy_values.chan3 < yCenter*0.6) {
+    } else if(joy_values.chan3 < yCenter*0.4) {
          //printf("DOWN\n\r");
          return(DOWN);
        }
 
-    if(joy_values.chan4 >= xCenter*1.6) {
+    if(joy_values.chan4 >= xCenter*1.4) {
          //printf("RIGHT\n\r");
          return(RIGHT);
-    } else if(joy_values.chan4 < xCenter*0.6) {
+    } else if(joy_values.chan4 < xCenter*0.4) {
          //printf("LEFT\n\r");
          return(LEFT);
        }

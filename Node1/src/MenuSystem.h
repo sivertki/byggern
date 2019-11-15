@@ -1,3 +1,4 @@
+#include "DEFINITIONS.h"
 /**
  * \file MenuSystem.h
  * \brief A file containing the menu system for navigating the OLED screen.
@@ -13,4 +14,4 @@ void MENU_home();
  * \param dir A Direction containing the direction of the joystick [UP, DOWN, LEFT, RIGHT].
  * \param butt A struct ButtonStruct that containing the button presses.
  */
-void MENU_nav(Direction dir, struct ButtonStruct butt);
+void MENU_nav(Direction dir, struct ButtonStruct butt, State state);

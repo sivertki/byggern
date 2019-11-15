@@ -13,6 +13,9 @@
  */
 typedef enum Direction {UP, DOWN, LEFT, RIGHT, NONE} Direction;
 
+//TODO doxygen
+typedef enum State{MENU, PINGPONG, SETTINGS, CREDITS} State;
+
 /**
  * \brief A struct containing the different values that we get from the sliders and joystick X/Y.
  */
