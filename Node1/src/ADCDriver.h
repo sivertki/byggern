@@ -24,21 +24,15 @@ struct Percentage {
 struct QuadChannel ADC_get_adc_values(void);
 
 /**
- * \brief A function that returns the values of the buttons on the P1000.
- * \return Returns a ButtonStruct struct containing the values of the buttons in boolean form [0, 1].
- */
-struct ButtonStruct ADC_get_button_values(void);
-
-/**
  * \brief A function that calibrates the joystick center positions.
  */
-void joy_cal(void);
+void ADC_joystick_calibration(void);
 
 /**
  * \brief A function that returns the direction that the joystick is being pushed.
  * \return Returns a Direction (specified by the Direction enum) which can be [LEFT, RIGH, UP, DOWN].
  */
-Direction joy_dir(void);
+Direction ADC_get_joystick_direction(void);
 
 /**
  * \brief A function that calculates the percentage displacement of the joystick in the X- and Y-axis.

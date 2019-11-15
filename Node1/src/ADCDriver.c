@@ -65,22 +65,6 @@ struct QuadChannel ADC_get_adc_values() {
     return val;
 }
 
-struct ButtonStruct ADC_get_button_values() {
-    struct ButtonStruct buttonValue;
-
-    uint8_t read_port_b = PINB;
-
-    bool left_button = read_port_b & (1<<PB1);
-    bool right_button = read_port_b & (1<<PB0);
-    bool joy_button = !(read_port_b & (1<<PB2));
-
-    buttonValue.lb = left_button;
-    buttonValue.rb = right_button;
-    buttonValue.jb = joy_button;
-
-    return buttonValue;
-}
-
 /**
  * \brief A function
  */
@@ -112,18 +96,19 @@ uint8_t read_channel(void) {
      return read_value;
  }
 
-void joy_cal() {
+void ADC_joystick_calibration() {
      struct QuadChannel joy_values = ADC_get_adc_values();
 
      yCenter = joy_values.chan3;
      xCenter = joy_values.chan4;
 
-     printf("Calibration complete. Center Y = %d & Center X = %d\n\r", yCenter, xCenter);
+     //printf("Calibration complete. Center Y = %d & Center X = %d\n\r", yCenter, xCenter);
 
      //_delay_ms(500);
  }
 
-Direction joy_dir() {
+Direction ADC_get_joystick_direction() {
+    //TODO this does not work properly at all!!!
    struct QuadChannel joy_values = ADC_get_adc_values();
 
     if(joy_values.chan3 >= yCenter*1.6) {
