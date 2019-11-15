@@ -45,8 +45,8 @@ int xCenter;
  */
 int yCenter;
 
-struct QuadChannel ADC_get_adc_values() {
-    struct QuadChannel val;
+struct QuadADCChannels ADC_get_adc_values() {
+    struct QuadADCChannels val;
     set_channel(1);
     _delay_ms(5);
     val.chan1 = read_channel();
@@ -97,7 +97,7 @@ uint8_t read_channel(void) {
  }
 
 void ADC_joystick_calibration() {
-     struct QuadChannel joy_values = ADC_get_adc_values();
+     struct QuadADCChannels joy_values = ADC_get_adc_values();
 
      yCenter = joy_values.chan3;
      xCenter = joy_values.chan4;
@@ -109,7 +109,7 @@ void ADC_joystick_calibration() {
 
 Direction ADC_get_joystick_direction() {
     //TODO this does not work properly at all!!!
-   struct QuadChannel joy_values = ADC_get_adc_values();
+   struct QuadADCChannels joy_values = ADC_get_adc_values();
 
     if(joy_values.chan3 >= yCenter*1.6) {
          //printf("UP\n\r");
@@ -137,7 +137,7 @@ struct Percentage joy_pos() {
     float positive_y = (100 / (255 - yCenter));
     float positive_x = (100 / (255 - xCenter));
 
-    struct QuadChannel current_values = get_adc_values();
+    struct QuadADCChannels current_values = get_adc_values();
 
     if(current_values.chan3 >= yCenter) {
         float printYPercentage = positive_y * (current_values.chan3 - yCenter);

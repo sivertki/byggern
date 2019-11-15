@@ -16,7 +16,7 @@ typedef enum Direction {UP, DOWN, LEFT, RIGHT, NONE} Direction;
 /**
  * \brief A struct containing the different values that we get from the sliders and joystick X/Y.
  */
-struct QuadChannel {
+struct QuadADCChannels {
     uint8_t chan1; /**< Values for the left slider [0, 255] */
     uint8_t chan2; /**< Values for the right slider [0, 255] */
     uint8_t chan3; /**< Values for the y-axis of the joystick [0, 255] */

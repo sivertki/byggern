@@ -19,9 +19,9 @@ struct Percentage {
 
 /**
  * \brief A function that returns the values of the sliders and the joystick positions.
- * \return Returns a QuadChannel struct containing the values of the sliders and joystick X/Y in range [0, 255].
+ * \return Returns a QuadADCChannels struct containing the values of the sliders and joystick X/Y in range [0, 255].
  */
-struct QuadChannel ADC_get_adc_values(void);
+struct QuadADCChannels ADC_get_adc_values(void);
 
 /**
  * \brief A function that calibrates the joystick center positions.
