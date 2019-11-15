@@ -25,7 +25,7 @@ Direction previous_direction;
  */
 uint8_t previous_menu_selection = 0;
 
-void menu_home() {
+void MENU_home() {
   OLED_goto_line(0);
   OLED_set_font(8);
   OLED_printf("------MENU------");
@@ -92,7 +92,7 @@ void menu_print_selected(char str[]) {
   OLED_printf("<");
 }
 
-void menu_nav(Direction dir, struct ButtonStruct butt) {
+void MENU_nav(Direction dir, struct ButtonStruct butt) {
   if(previous_direction == dir) {
     if (butt.jb && current_menu_selection != previous_menu_selection) {
       printf("%s\n\r", main_menu_items[current_menu_selection - 1]);
