@@ -14,4 +14,4 @@ void MENU_home();
  * \param dir A Direction containing the direction of the joystick [UP, DOWN, LEFT, RIGHT].
  * \param butt A struct ButtonStruct that containing the button presses.
  */
-void MENU_nav(Direction dir, struct ButtonStruct butt, State state);
+State MENU_nav(Direction dir, struct ButtonStruct butt, State state);

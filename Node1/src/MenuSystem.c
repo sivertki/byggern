@@ -9,6 +9,9 @@ const char *main_menu_items[5] = {"PING-PONG", "HIGH SCORES", "SETTINGS", "DRAW 
 const uint8_t num_settings_menu_items = 5;
 const char *settings_menu_items[5] = {"BRIGHTNESS", "INVERT SCREEN", "OPTION 3", "OPTION 4", "OPTION 5"};
 
+const uint8_t num_credits_items = 3;
+const char * credits_items[3] = {"Sivert Kittelsen", "Nikolai Ljoekjell", "Ida Sandsbraaten"};
+
 /**
  * \brief An uint8_t containing information about the current menu item selected.
  */
@@ -92,7 +95,8 @@ void menu_print_selected(char str[]) {
 }
 
 //TODO this needs major overhaul
-void MENU_nav(Direction dir, struct ButtonStruct butt, State state) {
+State MENU_nav(Direction dir, struct ButtonStruct butt, State state) {
+  /*
   if(previous_direction == dir) {
     if (butt.jb && current_menu_selection != previous_menu_selection) {
       printf("%s\n\r", main_menu_items[current_menu_selection - 1]);
@@ -101,6 +105,7 @@ void MENU_nav(Direction dir, struct ButtonStruct butt, State state) {
     }
     return;
   }
+  */
 
   switch (dir) {
     case UP:
@@ -130,17 +135,31 @@ void MENU_nav(Direction dir, struct ButtonStruct butt, State state) {
     break;
     case RIGHT:
         //RIGHT means the menu item is selected. State needs to be changed accordingly.
-        //printf("%s\n\r", main_menu_items[current_menu_selection - 1]);
-        //generate_sub_menu();
-        switch (state)
+        printf("Selected program: %s\n\r", main_menu_items[current_menu_selection - 1]);
+        switch (current_menu_selection)
         {
-          case MENU:
-            //TODO change state to fit the chosen setting
-            //Reprint OLED for new state
-            break;
-        
-          default:
-            break;
+        case 1: //PINGPONG 1st alternative
+          //TODO Print new screen to show while playing game
+          OLED_reset();
+          OLED_printf("PING PONG GAME");
+          OLED_goto_pos(2, 0);
+          OLED_printf("ACTIVE!!");
+          OLED_goto_pos(0, 0);
+          //return new state
+          return PINGPONG;
+          break;
+        case 2: //SETTINGS 2nd alternative
+          //TODO Print new screen to show settings
+
+          //return new state
+          return SETTINGS;
+          break;
+        case 3: //CREDITS 3rd alternative
+          //TODO print credits
+
+          //return new state
+          return CREDITS;
+          break;
         }
     break;
     case LEFT:
@@ -148,6 +167,7 @@ void MENU_nav(Direction dir, struct ButtonStruct butt, State state) {
         //TODO should  be used to exit if not in main menu
     break;
   }
-
+  
   previous_direction = dir;
+  return state;
 }
