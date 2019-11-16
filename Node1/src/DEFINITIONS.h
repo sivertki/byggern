@@ -13,7 +13,9 @@
  */
 typedef enum Direction {UP, DOWN, LEFT, RIGHT, NONE} Direction;
 
-//TODO doxygen
+/**
+ * An enum containing the various states that the menu system can be in.
+ */
 typedef enum State{MENU, PINGPONG, SETTINGS, CREDITS} State;
 
 /**

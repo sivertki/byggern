@@ -11,6 +11,8 @@
 
 /**
  * \brief A function initializing the controller functionality.
+ * Initializes the controller terms and sets up the timer interrupt that makes
+ * sure that the regulator has a constant time step.
  */
 void CONTROLLER_Init();
 
@@ -18,21 +20,25 @@ void CONTROLLER_Init();
 //short int CONTROLLER_calculateOutput(short int error);
 
 /**
- * \brief A function that
+ * \brief A function that sets the control terms for the PID controller.
+ * \param p a float that sets the control term for the p part of the PID.
+ * \param i a float that sets the control term for the i part of the PID.
+ * \param d a float that sets the control term for the d part of the PID.
 */
 void CONTROLLER_setControlTerms(float p, float i, float d);
 
 /**
+ * \brief A function that sets the reference that the controller is supposed to stear towards.
 */
 void CONTROLLER_setReference(short int in);
 
 /**
+ * \brief A function that updates the controller by sending the controller output to the MOTOR_setMovement function.
 */
 void CONTROLLER_updateController();
 //ISR(TIMER3_OVF_vect);
 
-/**
-*/
+// The get functions are supposed to be removed (?)
 short int getErrorSum();
 
 short int getError();

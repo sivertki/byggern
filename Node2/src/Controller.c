@@ -3,42 +3,76 @@
 #include <avr/io.h>
 
 /**
- * A float containing the coefficient for the integral part of the PID-regulator.
+ * \brief A float containing the coefficient for the integral part of the PID-regulator.
  */
 volatile float K_i;
+
 /**
- * A float containing the coefficient for the proportional part of the PID-regulator.
+ * \brief A float containing the coefficient for the proportional part of the PID-regulator.
  */
 volatile float K_p;
+
 /**
- * A float containing the coefficient for the derivative part of the PID-regulator.
+ * \brief A float containing the coefficient for the derivative part of the PID-regulator.
  */
 volatile float K_d;
+
 /**
- * A float containing the coefficient for the time step of the PID-regulator.
+ * \brief A float containing the coefficient for the time step of the PID-regulator.
  */
 volatile float T_PID;
+
 /**
- * A float containing the sum of errors in the PID-regulator.
+ * \brief A short int containing the sum of errors in the PID-regulator.
  */
 volatile short int error_sum;
+
 /**
- * A float containing the last error calculated.
+ * \brief A short int containing the last error calculated.
  */
 volatile short int last_error;
+
 /**
- * A float containing the reference value that the PID-regulator is stearing towards.
+ * \brief A short int containing the reference value that the PID-regulator is stearing towards.
  */
 volatile short int reference_value;
 
+/**
+ * \brief
+ */
 volatile short int encoder_value;
+
+/**
+ * \brief
+ */
 volatile short int error;
+
+/**
+ * \brief
+ */
 volatile short int u;
 
+/**
+ * \brief
+ */
 volatile short int GLOBAL_output;
+
+/**
+ * \brief
+ */
 volatile float output;
 
+/**
+ * \brief
+ */
 volatile short int difference;
+
+/**
+ * \brief A short int containing the sum of the encoder values.
+ * Since the encoder gets reset every time the encoder value is read, this
+ * variable is needed to store the total distance.
+ */
+volatile short int encoder_sum;
 
 void CONTROLLER_Init() {
   CONTROLLER_setControlTerms(1,1,1);
