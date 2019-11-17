@@ -4,7 +4,7 @@
  */
 
  #include <stdio.h>
-
+typedef enum Buffer{BufferZero, BufferOne} Buffer;
 struct CANMessage {
   unsigned int id;
   uint8_t length;
@@ -18,4 +18,4 @@ void can_init();
 
 void can_message_send(struct CANMessage* message);
 
-struct CANMessage can_data_receive(void);
+struct CANMessage can_data_receive(Buffer buf);
