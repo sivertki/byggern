@@ -45,6 +45,11 @@ volatile short int encoder_value;
 /**
  * \brief
  */
+volatile short int encoder_max;
+
+/**
+ * \brief
+ */
 volatile short int error;
 
 /**
@@ -74,6 +79,8 @@ volatile short int difference;
  */
 volatile short int encoder_sum;
 
+//volatile Control control_type; REMOVE?
+
 void CONTROLLER_Init() {
   CONTROLLER_setControlTerms(1,1,1);
   T_PID = 1;
@@ -93,14 +100,27 @@ void CONTROLLER_Init() {
   //DDRL |= (1<<PL6);
 }
 
-short int CONTROLLER_calculateError(short int  measured_value) {
+short int CONTROLLER_calculateError(short int  measured_value, Control controlType) {
   difference =  measured_value - reference_value;
-  if(difference < 100 && difference > -100) {
-    return 0;
+  //printf("Difference %hi\n\r", difference);
+  //printf("measured_value: %hi , reference_value: %hi\n\r", measured_value, reference_value);
+  if(controlType) {
+    if(difference < 100 && difference > -100) {
+      return 0;
+    }
+    else {
+      return difference;
+    }
   }
   else {
-    return difference;
+    if(difference < 1000 && difference > -1000) {
+      return 0;
+    }
+    else {
+      return difference;
+    }
   }
+
 
  }
 
@@ -110,11 +130,17 @@ void CONTROLLER_setControlTerms(float p, float i, float d) {
   K_d = d;
 }
 
-short int CONTROLLER_calculateOutput(short int error) {
+short int CONTROLLER_calculateOutput(short int error, Control controlType) {
   error_sum += error;
   //printf("PID values: %f, %f, %f \n\r", K_p, K_i, K_d);
   //float output;
-  output = -((K_p * (float)error) + (T_PID * K_i * ((float)error_sum)) + ((K_d/T_PID) * ((float)error - (float)last_error)));
+  if(controlType) { //PD
+    output = -((K_p * (float)error) + (T_PID * K_i * ((float)error_sum)) + ((K_d/T_PID) * ((float)error - (float)last_error)));
+  }
+  else { //PID
+    output = (K_p * (float)error) + (T_PID * K_i * ((float)error_sum)) + ((K_d/T_PID) * ((float)error - (float)last_error));
+  }
+
 
   //printf("float output: %f\n\r", output);
 
@@ -123,14 +149,21 @@ short int CONTROLLER_calculateOutput(short int error) {
   return (short int)output;
 }
 
-void CONTROLLER_updateController() {
+void CONTROLLER_updateController(Control controlType) {
   //PORTL ^= (1<<PL6);
   encoder_value = MOTOR_getEncoderValue();
-  //scaledJoystickValue = scaleJoystickSpeed(joystickval);
-  //printf("Scaled joystick value: %hi , ", scaledJoystickValue);
-  error = CONTROLLER_calculateError(encoder_value);
-  //printf("Error: %hi, ", error);
-  u = CONTROLLER_calculateOutput(error);
+
+  if(controlType) { //PD
+    //scaledJoystickValue = scaleJoystickSpeed(joystickval);
+    //printf("Scaled joystick value: %hi , ", scaledJoystickValue);
+    error = CONTROLLER_calculateError(encoder_value, controlType);
+    //printf("Error: %hi, ", error);
+  }
+  else {  //PID
+    error = CONTROLLER_calculateError(encoder_sum, controlType);
+  }
+
+  u = CONTROLLER_calculateOutput(error, controlType);
 
   MOTOR_setMovement(u);
 }
@@ -139,6 +172,34 @@ void CONTROLLER_updateController() {
 void CONTROLLER_setReference(short int in){
   reference_value = in;
 }
+
+void CONTROLLER_setEncoderMax(short int encoderMax) {
+  encoder_max = encoderMax;
+  printf("Encoder max set to: %hi\n\r", encoderMax);
+}
+
+void CONTROLLER_addEncoderSum(short int encoderTerm) {
+  encoder_sum += encoderTerm;
+  //printf("Encoder sum: %hi \n\r", encoder_sum);
+}
+
+short int CONTROLLER_getEncoderSum() {
+  return encoder_sum;
+}
+
+void CONTROLLER_setEncoderSum(short int es) {
+  encoder_sum = es;
+}
+
+short int CONTROLLER_getEncoderMax() {
+  return encoder_max;
+}
+
+/* REMOVE?
+void CONTROLLER_setControlType(Control ControlType) {
+  control_type = ControlType;
+}
+*/
 
 //TODO remove this ugly shit
 short int getErrorSum() {

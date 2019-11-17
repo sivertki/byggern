@@ -32,4 +32,6 @@ void MOTOR_initialize();
  */
 short int MOTOR_getEncoderValue();
 
+void MOTOR_resetEncoder();
+
 //void MOTOR_setSpeed(uint8_t joystickIn);

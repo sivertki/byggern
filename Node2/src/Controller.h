@@ -9,6 +9,8 @@
 
 #include <stdio.h>
 
+typedef enum Control {PID, PD} Control;
+
 /**
  * \brief A function initializing the controller functionality.
  * Initializes the controller terms and sets up the timer interrupt that makes
@@ -35,7 +37,18 @@ void CONTROLLER_setReference(short int in);
 /**
  * \brief A function that updates the controller by sending the controller output to the MOTOR_setMovement function.
 */
-void CONTROLLER_updateController();
+void CONTROLLER_updateController(Control controlType);
+
+void CONTROLLER_setEncoderMax(short int encoderMax);
+
+short int CONTROLLER_getEncoderSum();
+
+void CONTROLLER_setEncoderSum(short int encoderSum);
+
+void CONTROLLER_setControlType(Control ControlType);
+
+short int CONTROLLER_getEncoderMax();
+
 //ISR(TIMER3_OVF_vect);
 
 // The get functions are supposed to be removed (?)

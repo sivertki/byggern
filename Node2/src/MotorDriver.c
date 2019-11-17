@@ -97,9 +97,18 @@ short int MOTOR_getEncoderValue() {
   //printf("MSB: %u, " , MSB);
   //printf("LSB: %u, " , LSB);
   encoder_value = MSB<<8 | LSB;
+
+  CONTROLLER_addEncoderSum(encoder_value);
+
   return encoder_value;
 }
 
+void MOTOR_resetEncoder() {
+  //Toggle !RST
+  PORTH ^= 1<<nRST;
+  _delay_us(200);
+  PORTH ^= 1<<nRST;
+}
 
 /*
 void MOTOR_setMovement(uint8_t joystickIn) {
