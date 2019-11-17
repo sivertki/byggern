@@ -71,7 +71,7 @@ int main (void)
 				ADCCANMessage.data[1] = qc.chan2;
 				ADCCANMessage.data[2] = qc.chan3;
 				ADCCANMessage.data[3] = qc.chan4;
-				ADCCANMessage.id = 1
+				ADCCANMessage.id = 1;
 				can_message_send(&ADCCANMessage);
 
 				//Check if both touch buttons are pressed. If so, exit and print menu again
