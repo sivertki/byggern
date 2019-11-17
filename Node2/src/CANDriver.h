@@ -4,7 +4,7 @@
  */
 
  #include <stdio.h>
-
+typedef enum Buffer{BufferZero, BufferOne} Buffer;
 /**
  * A struct containing the information transmitted over the CAN bus.
  */
@@ -27,4 +27,4 @@ void can_message_send(struct CANMessage* message);
 /**
  * \brief A function that recieves data from the CAN bus.
  */
-struct CANMessage can_data_receive(void);
+struct CANMessage can_data_receive(Buffer buf);
