@@ -153,7 +153,7 @@ void CONTROLLER_updateController(Control controlType) {
   //PORTL ^= (1<<PL6);
   encoder_value = MOTOR_getEncoderValue();
 
-  if(controlType) { //PD
+  if(controlType == JOYSTICK) { //PD
     //scaledJoystickValue = scaleJoystickSpeed(joystickval);
     //printf("Scaled joystick value: %hi , ", scaledJoystickValue);
     error = CONTROLLER_calculateError(encoder_value, controlType);
@@ -174,7 +174,8 @@ void CONTROLLER_setReference(short int in){
 }
 
 void CONTROLLER_setEncoderMax(short int encoderMax) {
-  encoder_max = encoderMax;
+  encoder_max = 9500;
+  //encoder_max = encoderMax;
   printf("Encoder max set to: %hi\n\r", encoderMax);
 }
 

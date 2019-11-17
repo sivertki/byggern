@@ -31,12 +31,8 @@ static int xCenter = 0;
  */
 static int yCenter = 0;
 
-//TODO remove these as they are NOT used in anything!
-static int K_p;
-static int K_d;
-static int K_i;
 
-Control control_type = PD;
+Control control_type = JOYSTICK;
 
 int main (void) {
   cli();
@@ -49,11 +45,12 @@ int main (void) {
   IR_init();
   MOTOR_initialize();
   CONTROLLER_Init();
-  //MCP_init();
   SOLENOID_init();
+  //MCP_init();
   //joy_cal();
 
-  CONTROLLER_setControlTerms(0.25,0.00,0.35);
+  //PD controller values
+  //CONTROLLER_setControlTerms(0.25,0.00,0.35);
 
 
   xCenter = 130;
@@ -68,31 +65,38 @@ int main (void) {
   //printf("K_p: %i, K_i: %i, K_d: %i\n\r", K_p, K_i, K_d);
   printf("Node 2 initialized!\n\r");
   _delay_ms(1000);
+  
+  //sei();
   sei();
-
+  
   //TODO maybe move all this into its own function in controller.c??
   short int ref = scaleJoystickSpeed(255);
   printf("Ref: %hi\n\r", ref);
   CONTROLLER_setReference(ref);
-  //CONTROLLER_updateController(PD);
+  //CONTROLLER_updateController(JOYSTICK);
   _delay_ms(2000);
   MOTOR_resetEncoder();
   CONTROLLER_setEncoderSum(0);
   ref = scaleJoystickSpeed(0);
   printf("Ref: %hi\n\r", ref);
   CONTROLLER_setReference(ref);
-  //CONTROLLER_updateController(PD);
+  //CONTROLLER_updateController(JOYSTICK);
   _delay_ms(2000);
   CONTROLLER_setEncoderMax(CONTROLLER_getEncoderSum());
-
+  
+  control_type = NONE;
+  
   MCP_init();
-  printf("MCP initialized\n\r");
+  //printf("MCP initialized\n\r");
   //joy_cal();
 
   //TODO fix with received message
-  CONTROLLER_setControlTerms(2,0,0);
+  //CONTROLLER_setControlTerms(2,0.005,0.2);
   //2,0.064,6.25
-  control_type = PID;
+  //control_type = PID;
+  printf("Entering while loop!\n\r");
+  
+  
   while(1) {
 
     //set high
@@ -143,13 +147,13 @@ int main (void) {
     */
     //printf("Loop-idi-doop!\n\r");
     _delay_ms(500);
-    printf("Error: %hi, Output: %hi, encoder sum: %hi\n\r", getError(), getOutput(), CONTROLLER_getEncoderSum());
+    printf("Error: %hi, Output: %hi, encoder sum: %hi, current state: %d\n\r", getError(), getOutput(), CONTROLLER_getEncoderSum(), control_type);
   }
 }
 
 void joy_cal() {
      struct CANMessage receivedMessage;
-     receivedMessage = can_data_receive();
+     receivedMessage = can_data_receive(BufferZero);
 
      yCenter = receivedMessage.data[0];
      xCenter = receivedMessage.data[1];
@@ -184,7 +188,6 @@ short int scaleJoystickSpeed(uint8_t joystickIn) {
  * and will make Node 2 read the appropriate registers containing the CAN message.
  */
 ISR(INT4_vect) {
-  //printf("Message interrupt!!!\n\r");
 
   // A CANMessage that is used for storing the last recieved CAN message.
   struct CANMessage receivedMessage;
@@ -206,40 +209,52 @@ ISR(INT4_vect) {
 
   //control_type = PID;
 
-  if(bufferZero) {
-    //TODO
-    receivedMessage = can_data_receive();
+  if(bufferOne) {
+      receivedMessage = can_data_receive(BufferOne);
 
-    switch (receivedMessage.id) {
-      case 1: //Quad message, contains all ADC values
-        if(control_type) {
-          // Speed-control
-          //CONTROLLER_setControlTerms(0.25,0.00,0.35);
-          joystickVal = receivedMessage.data[3];
-          new_reference = scaleJoystickSpeed(joystickVal);
-        }
-        else {
-          // Position-control
-          //CONTROLLER_setControlTerms(0.5,0.5,0.15);
-          leftsliderVal = 255 - receivedMessage.data[0];
-          new_reference = scaleSliderSpeed(leftsliderVal);
-          //printf("Encoder sum: %hi, Reference value: %hi\n\r", CONTROLLER_getEncoderSum(), new_reference);
-        }
+  } else if(bufferZero) {
+      receivedMessage = can_data_receive(BufferZero);
+  }
 
-        CONTROLLER_setReference(new_reference);
 
-        // Servo-control
-        servoVal = receivedMessage.data[1];
-        SERVO_setDutyCycle(255 - servoVal); //To invert direction
-        //printf("Error: %hi, ErrorSum: %hi\n\r", getError(), getErrorSum());
-        break;
-      case 2: //Button message, contains all buttons
-        //check if joystick button is pressed
-        if(receivedMessage.data[0] & 0b1) {
-          SOLENOID_fire();
-        }
-        break;
-    }
+  switch (receivedMessage.id) {
+    case 0: //All ADC values in Slider mode
+
+      // Position-control
+      //CONTROLLER_setControlTerms(0.5,0.5,0.15);
+      CONTROLLER_setControlTerms(2,0.005,0.2);
+      control_type = SLIDER;
+      leftsliderVal = 255 - receivedMessage.data[0];
+      new_reference = scaleSliderSpeed(leftsliderVal);
+      CONTROLLER_setReference(new_reference);
+      //printf("Encoder sum: %hi, Reference value: %hi\n\r", CONTROLLER_getEncoderSum(), new_reference);
+
+      // Servo-control
+      servoVal = receivedMessage.data[1];
+      SERVO_setDutyCycle(255 - servoVal); //To invert direction
+      
+      break;
+    case 1: //All ADC values in Joystick mode
+
+      // Speed-control
+      CONTROLLER_setControlTerms(0.25,0.00,0.35);
+      control_type = JOYSTICK;
+      joystickVal = receivedMessage.data[3];
+      new_reference = scaleJoystickSpeed(joystickVal);
+      CONTROLLER_setReference(new_reference);
+
+      // Servo-control
+      servoVal = receivedMessage.data[1];
+      SERVO_setDutyCycle(255 - servoVal); //To invert direction
+      //printf("Error: %hi, ErrorSum: %hi\n\r", getError(), getErrorSum());
+      break;
+    case 2: //Button message, contains all buttons
+      //check if joystick button is pressed
+      if(receivedMessage.data[0] & 0b1) {
+        SOLENOID_fire();
+      }
+      break;
+  }
     //printf("Received data: %u\r\n", receivedMessage.data[0]);
 
     //printf(" Scaled value: %hu\n\r", getScaledSensorValue(receivedMessage.data[0]));
@@ -247,9 +262,6 @@ ISR(INT4_vect) {
     //MOTOR_setMovement(receivedMessage.data[1]);
 
 
-  } else if(bufferOne) {
-    //TODO
-  }
 
   //clear interrupt flag
   EIFR &= ~(1<<4);
@@ -262,7 +274,9 @@ ISR(INT4_vect) {
  * of the next controller output and clearing the encoder.
  */
 ISR(TIMER3_OVF_vect) {
-   CONTROLLER_updateController(control_type);
+  if(control_type != NONE) {
+    CONTROLLER_updateController(control_type);
+  }
  }
 
 /**

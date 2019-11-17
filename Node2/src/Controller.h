@@ -9,7 +9,7 @@
 
 #include <stdio.h>
 
-typedef enum Control {PID, PD} Control;
+typedef enum Control {SLIDER, JOYSTICK, NONE} Control;
 
 /**
  * \brief A function initializing the controller functionality.
