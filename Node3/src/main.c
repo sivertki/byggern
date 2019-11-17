@@ -7,44 +7,13 @@
 #include "MCPDriver.h"
 #include "CANDriver.h"
 #include "SPIDriver.h"
+#include "IODriver.h"
 
 #define BAUD 9600
 #define MYUBBR 103 //TODO calculate FOSC/16/BAUD-1
 
-#define DDR_SPI DDRB
-#define DD_SS DDB2
-#define DD_MOSI DDB3
-#define DD_MISO DDB4
-#define DD_SCK DDB5
+static volatile struct CANMessage receivedMessage;
 
-
-struct CANMessage receivedMessage;
-
-/*
-void UART_init() {
-    //set baud rate
-    UBRR0H = (unsigned char) (MYUBBR>>8);
-    UBRR0L = (unsigned char) MYUBBR;
-
-    // Enable receiver and transmitter
-	UCSR0B = (1 << RXEN0 ) | (1 << TXEN0);
-
-    // Set frame format: 8 data, 2 stop bit
-	UCSR0C = (1 << USBS0) | (3 << UCSZ00);
-
-}
-void UART_transmit ( unsigned char *data) {
-    uint8_t loop_var=0;
-    while(data[loop_var] != '\0') {
-        while(!(UCSR0A & (1<<UDRE0)));
-
-        UDR0 = data[loop_var];
-        loop_var ++;
-    }
-    while(!(UCSR0A & (1<<UDRE0)));
-    UDR0 = '\r';
-}
-*/
 void main(){
     cli();
     SPI_init();
@@ -52,36 +21,23 @@ void main(){
     MCP_init();
     _delay_ms(20);
     can_init();
-    //TODO IO pins used to blink LED, for heartbeat and testing
-    DDRC |= (1<<PC0)|(1<<PC3);
-    DDRB |= (1<<PB0)|(1<<PB2);
+    _delay_ms(20);
+    IO_init();
+    //IO pin used to blink LED, for heartbeat
+    DDRC |= (1<<PC0);
+
+    //DDRB |= (1<<PB0)|(1<<PB2);
     //char a = 0xAA;
     
     sei();
     while(1){
         //Heartbeat
         PORTC ^= (1<<PC0);
-        //Transmit, but noting happens. SCK, MOSI pins don't change
-        //SPI_transmit(a);
-        //sprintf(data_str, "SPDR: %2x, SPCR: %2x, SPSR: %2x\n", SPDR, SPCR, SPSR);
-        //UART_transmit(data_str);
-        //a++;
         _delay_ms(1000);
-        
     }
 }
-/*
-ISR(SPI_STC_vect) {
-    //sprintf(data_str, "Transmit completed", SPDR, SPCR, SPSR);
-    //UART_transmit("data_str");
-    PORTB |= (1<<DD_SS);
-    PORTC ^= (1<<PC3);
-}
-*/
 
 ISR(INT0_vect){
-    PORTC ^= (1<<PC3);
-    _delay_ms(100);
     
     uint8_t int_flags = MCP_reads(MCP_CANINTF);
 
@@ -94,6 +50,7 @@ ISR(INT0_vect){
     if(bufferZero) {
         //TODO
         receivedMessage = can_data_receive();
+        interpret_CAN_message(receivedMessage);
         //TODO check id of message, and act upon it
 
     } else if(bufferOne) {
@@ -104,3 +61,24 @@ ISR(INT0_vect){
     EIFR &= ~(1<<0);
     
 }
+
+void interpret_CAN_message(struct CANMessage msg) {
+    if(msg.id == 3) {//Goal message TODO is this still true?
+        //Turn on buzzer
+        PORTC |= (1<<PC3);
+        //Enable timer
+        IO_buzzer_timer_enable();
+        
+    }
+}
+
+ISR(TIMER2_COMP_vect){
+    //Turn off buzzer
+    PORTC &= ~(1<<PC3);
+
+    //Disable timer
+    IO_buzzer_timer_disable();
+    //clear interrupt flag ??
+    //Is done automatically
+}
+
