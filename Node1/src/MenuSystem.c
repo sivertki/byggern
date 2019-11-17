@@ -2,15 +2,12 @@
 #include "MenuSystem.h"
 #include <string.h>
 
-const uint8_t num_main_menu_items = 5;
-const char *main_menu_items[5] = {"PING-PONG", "HIGH SCORES", "SETTINGS", "DRAW LINE", "ANIMATION"};
+const uint8_t num_main_menu_items = 3;
+const char *main_menu_items[3] = {"GAME JOY", "GAME SLIDE", "CREDITS"};
 //const char *sub_menus[5] = {*main_menu_items, *main_menu_items, *settings_menu_items *main_menu_items, *main_menu_items, };
 
-const uint8_t num_settings_menu_items = 5;
-const char *settings_menu_items[5] = {"BRIGHTNESS", "INVERT SCREEN", "OPTION 3", "OPTION 4", "OPTION 5"};
-
 const uint8_t num_credits_items = 3;
-const char * credits_items[3] = {"Sivert Kittelsen", "Nikolai Ljoekjell", "Ida Sandsbraaten"};
+const char * credits_items[3] = {"Ida", "Sivert", "Nikolai" };
 
 /**
  * \brief An uint8_t containing information about the current menu item selected.
@@ -28,6 +25,7 @@ Direction previous_direction;
 uint8_t previous_menu_selection = 0;
 
 void MENU_home() {
+  OLED_reset();
   OLED_goto_line(0);
   OLED_set_font(8);
   OLED_printf("------MENU------");
@@ -45,46 +43,20 @@ void MENU_home() {
     // Goes to the topmost line BELOW menu, and therefore have to have +2.
     OLED_goto_pos(i + 2, 0);
   }
+  OLED_goto_pos(0,0);
 }
 
-/**
- * \brief A function that generates the sub menus.
- * This function will generate every menu below the main / home menu. 
- */
-void generate_sub_menu() { //TODO maybe we should't prioritize to implement this
+void MENU_credits() {
   OLED_goto_line(0);
   OLED_set_font(8);
-  OLED_printf("----------------");
-  uint8_t offset = 0;
-  uint8_t diff = 16 - strlen(main_menu_items[previous_menu_selection]);
+  OLED_printf("-----CREDITS----");
+  OLED_goto_pos(1, 0);
+  for(uint8_t i = 0; i < num_credits_items; i ++) {
+      OLED_printf(credits_items[i]);
+    //OLED_goto_line(pos.line + 1);
 
-  //Prints the selected sub-menu in the middle of dashed lines
-  while(diff > 1) {
-    offset += 1;
-    diff -= 2;
-  }
-  OLED_goto_pos(0, offset * 8);
-  OLED_printf(main_menu_items[previous_menu_selection -1]);
-
-  switch (previous_menu_selection) {
-    case 2:
-
-    break;
-    case 4:
-      for(uint8_t i = 0; i < num_settings_menu_items; i ++) {
-        if(i == 0) {
-          menu_print_selected(settings_menu_items[i -1]);
-        }
-        else {
-          OLED_printf(" ");
-          OLED_printf(settings_menu_items[i -1]);
-        }
-        //OLED_goto_line(pos.line + 1);
-
-        // Goes to the topmost line BELOW menu, and therefore have to have +2.
-        OLED_goto_pos(i + 2, 0);
-      }
-    break;
+    // Goes to the topmost line BELOW menu, and therefore have to have +2.
+    OLED_goto_pos(i + 2, 0);
   }
 }
 
@@ -96,18 +68,10 @@ void menu_print_selected(char str[]) {
 
 //TODO this needs major overhaul
 State MENU_nav(Direction dir, struct ButtonStruct butt, State state) {
-  /*
-  if(previous_direction == dir) {
-    if (butt.jb && current_menu_selection != previous_menu_selection) {
-      printf("%s\n\r", main_menu_items[current_menu_selection - 1]);
-      previous_menu_selection = current_menu_selection;
-      //generate_sub_menu();
-    }
-    return;
-  }
-  */
-
-  switch (dir) {
+ switch (state)
+ {
+ case MENU:
+    switch (dir) {
     case UP:
       if(current_menu_selection != 1) {
         OLED_goto_line(current_menu_selection);
@@ -138,36 +102,55 @@ State MENU_nav(Direction dir, struct ButtonStruct butt, State state) {
         printf("Selected program: %s\n\r", main_menu_items[current_menu_selection - 1]);
         switch (current_menu_selection)
         {
-        case 1: //PINGPONG 1st alternative
-          //TODO Print new screen to show while playing game
+        case 1: //PINGPONG JOY 1st alternative
           OLED_reset();
           OLED_printf("PING PONG GAME");
           OLED_goto_pos(2, 0);
-          OLED_printf("ACTIVE!!");
+          OLED_printf("ACTIVE!");
+          OLED_goto_pos(4,0);
+          OLED_printf("USING:");
+          OLED_goto_pos(5,0);
+          OLED_printf("JOYSTICK!");
           OLED_goto_pos(0, 0);
           //return new state
-          return PINGPONG;
+          return PINGPONGJOY;
           break;
-        case 2: //SETTINGS 2nd alternative
-          //TODO Print new screen to show settings
-
+        case 2: //PINGONG SLIDER 2nd alternative
+          OLED_reset();
+          OLED_printf("PING PONG GAME");
+          OLED_goto_pos(2, 0);
+          OLED_printf("ACTIVE!");
+          OLED_goto_pos(4,0);
+          OLED_printf("USING:");
+          OLED_goto_pos(5,0);
+          OLED_printf("SLIDER!");
+          OLED_goto_pos(0, 0);
           //return new state
-          return SETTINGS;
+          return PINGPONGSLIDE;
           break;
         case 3: //CREDITS 3rd alternative
           //TODO print credits
-
+          OLED_reset();
+          MENU_credits();
           //return new state
           return CREDITS;
           break;
         }
     break;
-    case LEFT:
-        //printf("%s\n\r", "LEFTINSWITCH");
-        //TODO should  be used to exit if not in main menu
+    case NONE:
+    return state;
     break;
-  }
-  
-  previous_direction = dir;
+    }
+ case CREDITS:
+    if(dir==LEFT) {
+      MENU_home();
+      current_menu_selection = 1;
+      return MENU;
+    }
+    else {
+      return state;
+    }
+  break;
   return state;
+  }
 }

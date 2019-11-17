@@ -102,7 +102,7 @@ void ADC_joystick_calibration() {
      yCenter = joy_values.chan3;
      xCenter = joy_values.chan4;
 
-     //printf("Calibration complete. Center Y = %d & Center X = %d\n\r", yCenter, xCenter);
+     printf("Calibration complete. Center Y = %d & Center X = %d\n\r", yCenter, xCenter);
 
      //_delay_ms(500);
  }

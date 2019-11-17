@@ -28,5 +28,7 @@ struct ButtonStruct IO_get_button_values() {
     buttonValue.rb = right_button;
     buttonValue.jb = joy_button;
 
+    //printf("Button values: %d, %d, %d\n\r", buttonValue.lb, buttonValue.rb, buttonValue.jb);
+
     return buttonValue;
 }
