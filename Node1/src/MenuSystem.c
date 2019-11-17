@@ -44,6 +44,7 @@ void MENU_home() {
     OLED_goto_pos(i + 2, 0);
   }
   OLED_goto_pos(0,0);
+  current_menu_selection = 1;
 }
 
 void MENU_credits() {
@@ -144,7 +145,6 @@ State MENU_nav(Direction dir, struct ButtonStruct butt, State state) {
  case CREDITS:
     if(dir==LEFT) {
       MENU_home();
-      current_menu_selection = 1;
       return MENU;
     }
     else {

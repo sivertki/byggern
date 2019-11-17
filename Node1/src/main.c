@@ -81,7 +81,7 @@ int main (void)
 					MENU_home();
 				}
 				
-				//printf("ADC VALUES: %u, %u, %u, %u\n\r", qc.chan1, qc.chan2, qc.chan3, qc.chan4);
+				printf("ADC VALUES: %u, %u, %u, %u\n\r", qc.chan1, qc.chan2, qc.chan3, qc.chan4);
 				//TODO a way to exit pingping
 				_delay_ms(200);
 				break;
@@ -100,6 +100,7 @@ int main (void)
 					currentState = MENU;
 					MENU_home();
 				}
+				_delay_ms(200);
 				break;
 			default: //MENU, CREDITS
 				//Poll buttons
