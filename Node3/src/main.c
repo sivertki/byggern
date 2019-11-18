@@ -53,24 +53,11 @@ ISR(INT0_vect){
     } else if(bufferZero) {
         receivedMessage = can_data_receive(bufferZero);
     }
-    switch (receivedMessage.id)
-        {
-        case 0:
-            
-            break;
-        case 1:
-
-            break;
-        case 2:
-            //TODO move this to other case, where game lost message is sent
+    if(receivedMessage.id == 3) {
             //Turn on buzzer
             IO_sound_buzzer();
             _delay_ms(200);
             IO_silence_buzzer();
-
-            break;
-        default:
-            break;
-        }
+    }
 }
 
