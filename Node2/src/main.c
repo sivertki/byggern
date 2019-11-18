@@ -65,27 +65,27 @@ int main (void) {
   //printf("K_p: %i, K_i: %i, K_d: %i\n\r", K_p, K_i, K_d);
   printf("Node 2 initialized!\n\r");
   _delay_ms(1000);
-  
+
   //sei();
+  control_type = INITIALIZE;
   sei();
-  
+
+
   //TODO maybe move all this into its own function in controller.c??
   short int ref = scaleJoystickSpeed(255);
   printf("Ref: %hi\n\r", ref);
   CONTROLLER_setReference(ref);
-  //CONTROLLER_updateController(JOYSTICK);
-  _delay_ms(2000);
+  _delay_ms(2500);
   MOTOR_resetEncoder();
   CONTROLLER_setEncoderSum(0);
   ref = scaleJoystickSpeed(0);
   printf("Ref: %hi\n\r", ref);
   CONTROLLER_setReference(ref);
-  //CONTROLLER_updateController(JOYSTICK);
-  _delay_ms(2000);
+  _delay_ms(2500);
+  printf("Encoder Sum: %hi\n\r", CONTROLLER_getEncoderSum());
   CONTROLLER_setEncoderMax(CONTROLLER_getEncoderSum());
-  
+
   control_type = NONE;
-  
   MCP_init();
   //printf("MCP initialized\n\r");
   //joy_cal();
@@ -95,8 +95,8 @@ int main (void) {
   //2,0.064,6.25
   //control_type = PID;
   printf("Entering while loop!\n\r");
-  
-  
+
+
   while(1) {
 
     //set high
@@ -190,6 +190,7 @@ short int scaleJoystickSpeed(uint8_t joystickIn) {
 ISR(INT4_vect) {
 
   // A CANMessage that is used for storing the last recieved CAN message.
+
   struct CANMessage receivedMessage;
 
   uint8_t joystickVal;
@@ -204,6 +205,10 @@ ISR(INT4_vect) {
 
   uint8_t bufferZero = int_flags & 0b01;
   uint8_t bufferOne = int_flags & 0b10;
+
+  if(control_type == INITIALIZE) {
+    return;
+  }
 
   //short int scaledJoystickValue;
 
@@ -232,7 +237,7 @@ ISR(INT4_vect) {
       // Servo-control
       servoVal = receivedMessage.data[1];
       SERVO_setDutyCycle(255 - servoVal); //To invert direction
-      
+
       break;
     case 1: //All ADC values in Joystick mode
 
