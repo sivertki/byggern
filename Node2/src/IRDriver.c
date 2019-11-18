@@ -51,7 +51,7 @@ int IR_detect_goal(){
     uint16_t average = adc_val_sum / 5;
     //printf("Avreage: %hu\n\r", average);
     if(average < GOAL_THRESHOLD){
-      //printf("average: %u\n\r", adc_val_sum / 5);
+      printf("FAIL!!\n\r");
       return 1;
     }
   }
