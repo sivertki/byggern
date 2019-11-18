@@ -198,6 +198,7 @@ void MENU_highscores() {
     _delay_ms(5);
     OLED_printf(buffer);
   }
+  _delay_ms(3000);
   OLED_goto_pos(0,0);
 }
 
@@ -216,7 +217,53 @@ void MENU_print_score(uint8_t score) {
   for(uint8_t i = 0; i < 5; i++) {
     uint8_t highSRAM = SRAM_highscoreR(i);
     //printf("Highscore found in SRAM = %d, Your highscore = %d", highSRAM, score);
+
+    //uint8_t tempScoreOne;
+    //uint8_t tempScoreTwo;
+
+    char highStore[5];
+
     if(score > SRAM_highscoreR(i)) {
+      for(uint8_t j = 0; j < 5; j++) {
+        highStore[j] = SRAM_highscoreR(j);
+        printf("Highstore #%d = %d\n\r", i, highStore[i]);
+      }
+
+      for(uint8_t k = 0; k < 4 - i; k++) {
+        SRAM_highscoreW(highStore[k + i], (i + 1) + k);
+      }
+      /*
+      switch (i)
+      {
+      case 0:
+        tempScoreOne = SRAM_highscoreR(i + 1);
+        SRAM_highscoreW(SRAM_highscoreR(i), i + 1);
+        tempScoreTwo = SRAM_highscoreR(i + 2);
+        SRAM_highscoreW(tempScoreOne, i + 2);
+        tempScoreOne = SRAM_highscoreR(i + 3);
+        SRAM_highscoreW(tempScoreTwo, i + 3);
+        SRAM_highscoreW(tempScoreOne, i + 4);
+        break;
+      case 1:
+        tempScoreOne = SRAM_highscoreR(i + 1);
+        SRAM_highscoreW(SRAM_highscoreR(i), i + 1);
+        tempScoreTwo = SRAM_highscoreR(i + 2);
+        SRAM_highscoreW(tempScoreOne, i + 2);
+        SRAM_highscoreW(tempScoreTwo, i + 3);
+        break;
+      case 2:
+        tempScoreOne = SRAM_highscoreR(i + 1);
+        SRAM_highscoreW(SRAM_highscoreR(i), i + 1);
+        SRAM_highscoreW(tempScoreOne, i + 2);
+        break;
+      case 3:
+        SRAM_highscoreW(SRAM_highscoreR(i), i + 1);
+        break;
+      default:
+        break;
+      }
+      */
+
       _delay_ms(5);
       SRAM_highscoreW(score, i);
       _delay_ms(5);
@@ -230,7 +277,7 @@ void MENU_print_score(uint8_t score) {
       char shortBuffer[2];
       sprintf(shortBuffer, "%d", i + 1);
       OLED_printf(shortBuffer);
-      
+
       break;
     }
   }

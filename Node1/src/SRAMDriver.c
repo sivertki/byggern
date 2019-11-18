@@ -47,12 +47,20 @@ void SRAM_test(void) {
 void SRAM_init(void) {
     MCUCR = (1 << SRE); //XMEM enable
     SFIOR = (1 << XMM2); //masking unused bits
-    
+
+    /* HIGHSCORE RESET
+    for(int i = 0; i < 5; i++) {
+      SRAM_highscoreW(5 - i, i);
+    }
+    */
 }
 
 void SRAM_highscoreW(uint8_t score, uint8_t position) {
   volatile char *hs_ram_start = (char *) 0x1FF0;
   hs_ram_start[position] = score;
+  if(SRAM_highscoreR(position) != score) {
+    SRAM_highscoreW(score, position);
+  }
   //printf("Writing score %u to position %u in SRAM", score, position);
 }
 
