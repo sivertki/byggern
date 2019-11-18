@@ -18,9 +18,6 @@ typedef enum Control {SLIDER, JOYSTICK, INITIALIZE, NONE} Control;
  */
 void CONTROLLER_Init();
 
-//short int CONTORLLER_calculateError(short int  measured_value);
-//short int CONTROLLER_calculateOutput(short int error);
-
 /**
  * \brief A function that sets the control terms for the PID controller.
  * \param p a float that sets the control term for the p part of the PID.
@@ -32,28 +29,9 @@ void CONTROLLER_setControlTerms(float p, float i, float d);
 /**
  * \brief A function that sets the reference that the controller is supposed to stear towards.
 */
-void CONTROLLER_setReference(short int in);
+void CONTROLLER_setReference(uint8_t in, Control controlType);
 
 /**
  * \brief A function that updates the controller by sending the controller output to the MOTOR_setMovement function.
 */
 void CONTROLLER_updateController(Control controlType);
-
-void CONTROLLER_setEncoderMax(short int encoderMax);
-
-short int CONTROLLER_getEncoderSum();
-
-void CONTROLLER_setEncoderSum(short int encoderSum);
-
-void CONTROLLER_setControlType(Control ControlType);
-
-short int CONTROLLER_getEncoderMax();
-
-//ISR(TIMER3_OVF_vect);
-
-// The get functions are supposed to be removed (?)
-short int getErrorSum();
-
-short int getError();
-
-short int getOutput();

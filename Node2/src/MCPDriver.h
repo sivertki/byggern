@@ -1,5 +1,5 @@
 /**
- * \file MCPDriver2.h
+ * \file MCPDriver.h
  * \brief A file that makes it possible to control the MCP2515.
  */
 

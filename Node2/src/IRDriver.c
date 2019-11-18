@@ -10,10 +10,6 @@ void IR_init() {
   DDRA |= 1<<PA1;
   PORTA |= 1<<PA1;
 
-  //using A15, pin 82 on Atmega, pin A15 on arduino Mega to IR receiver
-  //ADCSRB |= (1<<MUX5);
-  //ADMUX |= (1<<MUX2) | (1<<MUX1) | (1<<MUX0);
-
   //Select Vref = AVcc
   ADMUX |= (1<<REFS0);
 
@@ -39,19 +35,15 @@ void IR_disable() {
 int IR_detect_goal(){
   uint8_t adc_val;
   adc_val = IR_read();
-  //printf("adc_val: %u\n\r", adc_val);
 
   if(adc_val < GOAL_THRESHOLD) {
     uint16_t adc_val_sum = 0;
     for(int i = 0; i < 5; i++) {
       adc_val_sum += IR_read();
-      //printf("adc_val_sum: %hu\n\r", adc_val_sum);
       _delay_ms(50);
     }
     uint16_t average = adc_val_sum / 5;
-    //printf("Avreage: %hu\n\r", average);
     if(average < GOAL_THRESHOLD){
-      printf("FAIL!!\n\r");
       return 1;
     }
   }

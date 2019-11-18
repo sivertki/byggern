@@ -3,6 +3,5 @@
 
 void SERVO_init();
 void SERVO_setDutyCycle(uint8_t controlIn);
-//uint16_t getScaledSensorValue(uint8_t controlIn); //TODO remove from here
 
 #endif

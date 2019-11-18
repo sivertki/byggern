@@ -10,7 +10,6 @@ void SOLENOID_init() {
 }
 
 void SOLENOID_fire() {
-  //TODO
   PORTA &= ~(1<<PA1);
   _delay_ms(200);
   PORTA |= (1<<PA1);

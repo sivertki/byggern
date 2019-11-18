@@ -1,26 +1,9 @@
-#include "MCPDriver2.h"
-#include "SPIDriver2.h"
+#include "MCPDriver.h"
+#include "SPIDriver.h"
 #include "MCP2515.h"
 #include <stdio.h>
 #include <avr/io.h>
 
-/*
-uint8_t MCP_init(){
-  uint8_t value;
-  SPI_init();
-  // InitializeSPI
-  MCP_reset();
-  // Send reset-command
-  // Self-test
-  MCP_reads(MCP_CANSTAT, &value);
-  if((value& MODE_MASK)  != MODE_CONFIG) {
-    printf(”MCP2515 is NOT in configurationmode afterreset!\n”);
-    return 1;
-  }
-  // More initialization
-  return 0;
-}
-*/
 
 void MCP_init() {
   //Enable interrupt on MCP2515 for both receive buffers
@@ -28,7 +11,6 @@ void MCP_init() {
   //Enable external interrupts for INT34for ATMega2560
   EICRB &= ~(1<<ISC41 | 1<<ISC40);
   EIMSK |= (1<<4);
-  //sei();
 }
 
 
@@ -39,7 +21,6 @@ uint8_t MCP_reads(uint8_t address){
   SPI_transmit(MCP_READ); // Send read instruction
   SPI_transmit(address); // Send address
   SPI_transmit(0xFF);   // Send dummy byte
-  // SPI_transmit(0xFF);   // Send dummy byte another time to give more time to MCU...
   result = SPI_receive(); // Read result
   PORTB |= (1<<DD_SS); // DeselectCAN-controller
 
@@ -100,17 +81,4 @@ void MCP_reset() {
   PORTB &= ~(1<<DD_SS);
   SPI_transmit(MCP_RESET);
   PORTB |= (1<<DD_SS);
-}
-
-uint8_t MCP_readRX() {
-  uint8_t result;
-  PORTB &= ~(1<<DD_SS); // Select CAN-controller
-  SPI_transmit(MCP_READ_RX0); // Send readRX instruction
-  //SPI_transmit(address); // Send address
-  SPI_transmit(0xFF);   // Send dummy byte
-  // SPI_transmit(0xFF);   // Send dummy byte another time to give more time to MCU...
-  result = SPI_receive(); // Read result
-  PORTB |= (1<<DD_SS); // DeselectCAN-controller
-
-  return result;
 }

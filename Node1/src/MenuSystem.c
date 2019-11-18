@@ -69,7 +69,6 @@ void menu_print_selected(char str[]) {
   OLED_printf("<");
 }
 
-//TODO this needs major overhaul
 State MENU_nav(Direction dir, struct ButtonStruct butt, State state) {
   struct CANMessage game_state_msg;
 
@@ -122,7 +121,6 @@ State MENU_nav(Direction dir, struct ButtonStruct butt, State state) {
           game_state_msg.length = 1;
           game_state_msg.data[0] = 0;
           can_message_send(&game_state_msg);
-          //return new state
           return PINGPONGJOY;
           break;
         case 2: //PINGONG SLIDER 2nd alternative
@@ -140,14 +138,11 @@ State MENU_nav(Direction dir, struct ButtonStruct butt, State state) {
           game_state_msg.length = 1;
           game_state_msg.data[0] = 1;
           can_message_send(&game_state_msg);
-          //return new state
           return PINGPONGSLIDE;
           break;
         case 3: //CREDITS 3rd alternative
-          //TODO print credits
           OLED_reset();
           MENU_credits();
-          //return new state
           return CREDITS;
           break;
         }
@@ -170,7 +165,6 @@ State MENU_nav(Direction dir, struct ButtonStruct butt, State state) {
 }
 
 void MENU_print_score(uint8_t score) {
-  //TODO
   OLED_reset();
   OLED_goto_pos(0,0);
   OLED_printf("GAME OVER!");

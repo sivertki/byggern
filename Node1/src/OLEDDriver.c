@@ -88,7 +88,6 @@ void OLED_clear_line(uint8_t line) {
 void OLED_goto_pos(uint8_t line, uint8_t column) {
   OLED_goto_line(line);
   OLED_goto_column(column);
-  //TODO
 }
 
 void OLED_set_brightness(uint8_t lvl) {
@@ -146,7 +145,6 @@ void OLED_printf(char str[]) {
       OLED_goto_line(pos.line);
     }
     OLED_write_single_char(str[i]);
-    //printf("Printing Letter: %c to pos: r:%d, c:%d , l:%d\n\r", str[i], pos.row, pos.column, pos.line);
     i++;
   }
 }

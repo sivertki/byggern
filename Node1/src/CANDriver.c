@@ -15,9 +15,6 @@ void can_message_send(struct CANMessage* message) {
   MCP_writes(TXB0SIDL, SIDL);
   MCP_writes(TXB0DLC, (0<<6) | message->length);
 
-  // printf("ThreeLSB %u\n\r", threeLSB);
-  // printf("ID 3 RS %u\n\r", tempId>>3);
-
   for(uint8_t i = 0; i < message->length; i++) {
       MCP_writes(TXB0D0 + i, message->data[i]);
   }
