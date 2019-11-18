@@ -7,6 +7,15 @@
 #include <stdio.h>
 
 /**
+ * \brief A struct that contains the position of the "cursor" on the OLED screen.
+ */
+struct OLED_position {
+  uint8_t row;  /**< The current position of the OLED "cursor" in terms of row number, [0, 64]. */
+  uint8_t column; /**< The current position of the OLED "cursor" in terms of column number, [0, 128]. */
+  uint8_t line; /**< The current position of the OLED "cursor" in terms of line number, [0, 8]. */
+};
+
+/**
  * \brief A function that initilaizes OLED.
  */
 void OLED_init();
@@ -34,10 +43,16 @@ void OLED_reset();
 void OLED_printf(char str[]);
 
 /**
- * \brief A struct that contains the position of the "cursor" on the OLED screen.
+ * \biref A function that
  */
-struct OLED_position {
-  uint8_t row;  /**< The current position of the OLED "cursor" in terms of row number, [0, 64]. */
-  uint8_t column; /**< The current position of the OLED "cursor" in terms of column number, [0, 128]. */
-  uint8_t line; /**< The current position of the OLED "cursor" in terms of line number, [0, 8]. */
-};
+void OLED_goto_pos(uint8_t line, uint8_t column);
+
+/**
+ * \biref A function that
+ */
+void OLED_goto_line(uint8_t line);
+
+/**
+ * \biref A function that
+ */
+void OLED_set_font(uint8_t fsize);
