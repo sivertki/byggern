@@ -1,7 +1,15 @@
+#ifndef F_CPU
+#define F_CPU 4915200UL
+#endif
+
+
 
 #include <stdlib.h>
 #include <avr/io.h>
+#include <stdio.h>
 #include "SRAMDriver.h"
+
+#include <util/delay.h>
 
 void SRAM_test(void) {
   volatile char *ext_ram = (char *) 0x1800; // Start address for the SRAM
@@ -39,14 +47,17 @@ void SRAM_test(void) {
 void SRAM_init(void) {
     MCUCR = (1 << SRE); //XMEM enable
     SFIOR = (1 << XMM2); //masking unused bits
+    
 }
 
 void SRAM_highscoreW(uint8_t score, uint8_t position) {
-  volatile char *hs_ram_start = (char *) 0x2000;
+  volatile char *hs_ram_start = (char *) 0x1FF0;
   hs_ram_start[position] = score;
+  //printf("Writing score %u to position %u in SRAM", score, position);
 }
 
 uint8_t SRAM_highscoreR(uint8_t position) {
-  volatile char *hs_ram_start = (char *) 0x2000;
+  volatile char *hs_ram_start = (char *) 0x1FF0;
+  //printf("Reading score %u from position %u in SRAM", hs_ram_start[position], position);
   return hs_ram_start[position];
 }

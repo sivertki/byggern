@@ -108,6 +108,7 @@ void ADC_joystick_calibration() {
 
 Direction ADC_get_joystick_direction() {
    struct QuadADCChannels joy_values = ADC_get_adc_values();
+   //printf("ADC values: %d, %d, %d, %d\n\r", joy_values.chan1, joy_values.chan2, joy_values.chan3, joy_values.chan4);
     if(joy_values.chan3 >= yCenter*1.4) {
          return(UP);
     } else if(joy_values.chan3 < yCenter*0.4) {

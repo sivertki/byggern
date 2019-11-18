@@ -1,12 +1,17 @@
+#ifndef F_CPU
+#define F_CPU 4915200UL
+#endif
+
 #include "OLEDDriver.h"
 #include "MenuSystem.h"
 #include "CANDriver.h"
 #include "SRAMDriver.h"
 #include <string.h>
 #include <stdio.h>
+#include <util/delay.h>
 
-const uint8_t num_main_menu_items = 3;
-const char *main_menu_items[3] = {"GAME JOY", "GAME SLIDE", "CREDITS"};
+const uint8_t num_main_menu_items = 4;
+const char *main_menu_items[4] = {"GAME JOY", "GAME SLIDE", "HIGHSCORES","CREDITS"};
 //const char *sub_menus[5] = {*main_menu_items, *main_menu_items, *settings_menu_items *main_menu_items, *main_menu_items, };
 
 const uint8_t num_credits_items = 3;
@@ -27,6 +32,8 @@ Direction previous_direction;
  */
 uint8_t previous_menu_selection = 0;
 
+void MENU_highscores();
+
 void MENU_home() {
   OLED_reset();
   OLED_goto_line(0);
@@ -41,9 +48,7 @@ void MENU_home() {
       OLED_printf(" ");
       OLED_printf(main_menu_items[i]);
     }
-    //OLED_goto_line(pos.line + 1);
 
-    // Goes to the topmost line BELOW menu, and therefore have to have +2.
     OLED_goto_pos(i + 2, 0);
   }
   OLED_goto_pos(0,0);
@@ -57,9 +62,7 @@ void MENU_credits() {
   OLED_goto_pos(1, 0);
   for(uint8_t i = 0; i < num_credits_items; i ++) {
       OLED_printf(credits_items[i]);
-    //OLED_goto_line(pos.line + 1);
 
-    // Goes to the topmost line BELOW menu, and therefore have to have +2.
     OLED_goto_pos(i + 2, 0);
   }
 }
@@ -69,6 +72,7 @@ void menu_print_selected(char str[]) {
   OLED_printf(str);
   OLED_printf("<");
 }
+
 
 State MENU_nav(Direction dir, struct ButtonStruct butt, State state) {
   struct CANMessage game_state_msg;
@@ -100,7 +104,6 @@ State MENU_nav(Direction dir, struct ButtonStruct butt, State state) {
         OLED_clear_line(current_menu_selection);
         menu_print_selected(main_menu_items[current_menu_selection -1]);
       }
-      //previous_direction = dir;
     break;
     case RIGHT:
         //RIGHT means the menu item is selected. State needs to be changed accordingly.
@@ -141,7 +144,12 @@ State MENU_nav(Direction dir, struct ButtonStruct butt, State state) {
           can_message_send(&game_state_msg);
           return PINGPONGSLIDE;
           break;
-        case 3: //CREDITS 3rd alternative
+        case 3:
+          OLED_reset();
+          MENU_highscores();
+          return HIGHSCORES;
+          break;
+        case 4: //CREDITS 4rd alternative
           OLED_reset();
           MENU_credits();
           return CREDITS;
@@ -152,32 +160,45 @@ State MENU_nav(Direction dir, struct ButtonStruct butt, State state) {
     return state;
     break;
     }
+  break;
+case HIGHSCORES:
+    if(dir==LEFT) {
+      MENU_home();
+      return MENU;
+    }
+    else {
+      return HIGHSCORES;
+    }
+  break;
  case CREDITS:
     if(dir==LEFT) {
       MENU_home();
       return MENU;
     }
     else {
-      return state;
+      return CREDITS;
     }
   break;
+  default:
   return state;
   }
 }
 
-void MENU_print_highscores() {
-  OLED_reset();
-  OLED_goto_pos(0,0);
-  OLED_printf("--HIGHSCORES--")
-  for (uint8_t i = 0; i < 6; i++) {
-    char buffer[1];
+void MENU_highscores() {
+  OLED_printf("-HIGHSCORES-");
+  OLED_goto_pos(2,0);
+  for (uint8_t i = 0; i < 5; i++) {
+    OLED_goto_pos(i + 2, 0);
+    char buffer[2];
     OLED_printf("#");
-    sprintf(buffer, "%d", i)
+    sprintf(buffer, "%d", i + 1);
     OLED_printf(buffer);
     OLED_printf(" ");
     sprintf(buffer, "%d", SRAM_highscoreR(i));
+    _delay_ms(5);
     OLED_printf(buffer);
   }
+  OLED_goto_pos(0,0);
 }
 
 void MENU_print_score(uint8_t score) {
@@ -190,21 +211,31 @@ void MENU_print_score(uint8_t score) {
   char buffer[13];
   sprintf(buffer, "%d", score);
   OLED_printf(buffer);
+  _delay_ms(2000);
 
-  for(uint8_t i = 0; i < 6; i++) {
+  for(uint8_t i = 0; i < 5; i++) {
+    uint8_t highSRAM = SRAM_highscoreR(i);
+    //printf("Highscore found in SRAM = %d, Your highscore = %d", highSRAM, score);
     if(score > SRAM_highscoreR(i)) {
+      _delay_ms(5);
       SRAM_highscoreW(score, i);
+      _delay_ms(5);
 
       OLED_reset();
-      OLED_goto_pos(0,0);
-      OLED_printf("CONGRATULATIONS!!!");
+      OLED_printf("CONGRATZ!!!");
       OLED_goto_pos(2,0);
-      OLED_printf("NEW HIGHSCORE!")
-      OLED_printf("YOU PLACED # ")
-      sprintf(buffer, "%d", i);
-      OLED_printf(buffer);
-
-      MENU_print_highscores(i);
+      OLED_printf("NEW HIGHSCORE");
+      OLED_goto_pos(3,0);
+      OLED_printf("YOU PLACED # ");
+      char shortBuffer[2];
+      sprintf(shortBuffer, "%d", i + 1);
+      OLED_printf(shortBuffer);
+      
+      break;
     }
   }
+
+  _delay_ms(2000);
+  //MENU_print_highscores();
+  //_delay_ms(5000);
 }

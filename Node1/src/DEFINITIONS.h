@@ -16,7 +16,7 @@ typedef enum Direction {UP, DOWN, LEFT, RIGHT, NONE} Direction;
 /**
  * An enum containing the various states that the menu system can be in.
  */
-typedef enum State{MENU, PINGPONGJOY, PINGPONGSLIDE, CREDITS} State;
+typedef enum State{MENU, PINGPONGJOY, PINGPONGSLIDE, CREDITS, HIGHSCORES} State;
 
 /**
  * \brief A struct containing the different values that we get from the sliders and joystick X/Y.
