@@ -5,23 +5,6 @@
 #include <avr/io.h>
 #include <avr/interrupt.h>
 
-/*
-uint8_t MCP_init(){
-  uint8_t value;
-  SPI_init();
-  // InitializeSPI
-  MCP_reset();
-  // Send reset-command
-  // Self-test
-  MCP_reads(MCP_CANSTAT, &value);
-  if((value& MODE_MASK)  != MODE_CONFIG) {
-    printf(”MCP2515 is NOT in configurationmode afterreset!\n”);
-    return 1;
-  }
-  // More initialization
-  return 0;
-}
-*/
 void MCP_init() {
   //Enable interrupt on MCP2515 for both receive buffers
   MCP_bitModify(MCP_CANINTE, 0x03, 0x03); //address, mask , data
@@ -38,7 +21,6 @@ uint8_t MCP_reads(uint8_t address){
   SPI_transmit(MCP_READ); // Send read instruction
   SPI_transmit(address); // Send address
   SPI_transmit(0xFF);   // Send dummy byte
-  // SPI_transmit(0xFF);   // Send dummy byte another time to give more time to MCU...
   result = SPI_receive(); // Read result
   PORTB |= (1<<DD_SS); // DeselectCAN-controller
 

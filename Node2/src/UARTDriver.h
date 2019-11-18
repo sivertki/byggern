@@ -1,5 +1,5 @@
 /**
- * \file UARTDriver2.h
+ * \file UARTDriver.h
  * \brief A file containing the driver for the UART.
  */
 

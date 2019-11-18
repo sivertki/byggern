@@ -19,8 +19,6 @@ typedef enum {
  */
 void MOTOR_setMovement(short int controllerOutput);
 
-//void MOTOR_setMovementJoystick(uint8_t joystickIn);
-
 /**
  * \brief A function that initilaizes the motor.
  */
@@ -33,5 +31,3 @@ void MOTOR_initialize();
 short int MOTOR_getEncoderValue();
 
 void MOTOR_resetEncoder();
-
-//void MOTOR_setSpeed(uint8_t joystickIn);

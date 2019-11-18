@@ -28,6 +28,7 @@ void SERVO_setDutyCycle(uint8_t controlIn) {
   }
 }
 
+//Scales from value read from ADC of joystick to value used in Duty Cycle
 uint16_t getScaledSensorValue(uint8_t controlIn){
   uint16_t outCompare = controlIn*((4200 - 1800)/255) + 1800;
   return outCompare;

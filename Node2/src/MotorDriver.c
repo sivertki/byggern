@@ -12,8 +12,6 @@
 #define DIR PH1
 
 void MOTOR_initialize() {
-  //sei();
-
   //set pins dor !RST, !OE, EN, SEL, DIR as output
   DDRH |= 1<<PH6 |1<<PH5 | 1<<PH4 | 1<<PH3 | 1<<PH1;
 
@@ -23,7 +21,6 @@ void MOTOR_initialize() {
   //set A8 to A15 as input
   DDRK &= ~(0xFF);
 
-  //
   PORTH |= 1<<nRST;
 
   TWI_Master_Initialise();
@@ -94,8 +91,6 @@ short int MOTOR_getEncoderValue() {
   PORTH |= 1<<nOE;
 
   //Glue together MSB LSB
-  //printf("MSB: %u, " , MSB);
-  //printf("LSB: %u, " , LSB);
   encoder_value = MSB<<8 | LSB;
 
   CONTROLLER_addEncoderSum(encoder_value);
@@ -110,19 +105,3 @@ void MOTOR_resetEncoder() {
   PORTH ^= 1<<nRST;
 }
 
-/*
-void MOTOR_setMovement(uint8_t joystickIn) {
-  if(joystickIn < 125) {
-    MOTOR_setDirection(MotorLeft);
-    MOTOR_setSpeed(100);
-  }
-  else if(joystickIn > 150) {
-    MOTOR_setDirection(MotorRight);
-    MOTOR_setSpeed(100);
-  }
-  else {
-    MOTOR_setSpeed(0);
-  }
-
-}
-*/
