@@ -40,3 +40,13 @@ void SRAM_init(void) {
     MCUCR = (1 << SRE); //XMEM enable
     SFIOR = (1 << XMM2); //masking unused bits
 }
+
+void SRAM_highscoreW(uint8_t score, uint8_t position) {
+  volatile char *hs_ram_start = (char *) 0x2000;
+  hs_ram_start[position] = score;
+}
+
+uint8_t SRAM_highscoreR(uint8_t position) {
+  volatile char *hs_ram_start = (char *) 0x2000;
+  return hs_ram_start[position];
+}

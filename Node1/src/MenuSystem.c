@@ -1,6 +1,7 @@
 #include "OLEDDriver.h"
 #include "MenuSystem.h"
 #include "CANDriver.h"
+#include "SRAMDriver.h"
 #include <string.h>
 #include <stdio.h>
 
@@ -164,6 +165,21 @@ State MENU_nav(Direction dir, struct ButtonStruct butt, State state) {
   }
 }
 
+void MENU_print_highscores() {
+  OLED_reset();
+  OLED_goto_pos(0,0);
+  OLED_printf("--HIGHSCORES--")
+  for (uint8_t i = 0; i < 6; i++) {
+    char buffer[1];
+    OLED_printf("#");
+    sprintf(buffer, "%d", i)
+    OLED_printf(buffer);
+    OLED_printf(" ");
+    sprintf(buffer, "%d", SRAM_highscoreR(i));
+    OLED_printf(buffer);
+  }
+}
+
 void MENU_print_score(uint8_t score) {
   OLED_reset();
   OLED_goto_pos(0,0);
@@ -174,4 +190,21 @@ void MENU_print_score(uint8_t score) {
   char buffer[13];
   sprintf(buffer, "%d", score);
   OLED_printf(buffer);
+
+  for(uint8_t i = 0; i < 6; i++) {
+    if(score > SRAM_highscoreR(i)) {
+      SRAM_highscoreW(score, i);
+
+      OLED_reset();
+      OLED_goto_pos(0,0);
+      OLED_printf("CONGRATULATIONS!!!");
+      OLED_goto_pos(2,0);
+      OLED_printf("NEW HIGHSCORE!")
+      OLED_printf("YOU PLACED # ")
+      sprintf(buffer, "%d", i);
+      OLED_printf(buffer);
+
+      MENU_print_highscores(i);
+    }
+  }
 }

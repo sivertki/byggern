@@ -16,4 +16,7 @@ void MENU_home();
  */
 State MENU_nav(Direction dir, struct ButtonStruct butt, State state);
 
+/**
+ * A function that
+ */
 void MENU_print_score(uint8_t score);
