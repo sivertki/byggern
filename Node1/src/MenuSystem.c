@@ -1,6 +1,8 @@
 #include "OLEDDriver.h"
 #include "MenuSystem.h"
+#include "CANDriver.h"
 #include <string.h>
+#include <stdio.h>
 
 const uint8_t num_main_menu_items = 3;
 const char *main_menu_items[3] = {"GAME JOY", "GAME SLIDE", "CREDITS"};
@@ -69,6 +71,8 @@ void menu_print_selected(char str[]) {
 
 //TODO this needs major overhaul
 State MENU_nav(Direction dir, struct ButtonStruct butt, State state) {
+  struct CANMessage game_state_msg;
+
  switch (state)
  {
  case MENU:
@@ -113,6 +117,11 @@ State MENU_nav(Direction dir, struct ButtonStruct butt, State state) {
           OLED_goto_pos(5,0);
           OLED_printf("JOYSTICK!");
           OLED_goto_pos(0, 0);
+
+          game_state_msg.id = 4;
+          game_state_msg.length = 1;
+          game_state_msg.data[0] = 0;
+          can_message_send(&game_state_msg);
           //return new state
           return PINGPONGJOY;
           break;
@@ -126,6 +135,11 @@ State MENU_nav(Direction dir, struct ButtonStruct butt, State state) {
           OLED_goto_pos(5,0);
           OLED_printf("SLIDER!");
           OLED_goto_pos(0, 0);
+
+          game_state_msg.id = 4;
+          game_state_msg.length = 1;
+          game_state_msg.data[0] = 1;
+          can_message_send(&game_state_msg);
           //return new state
           return PINGPONGSLIDE;
           break;
@@ -153,4 +167,17 @@ State MENU_nav(Direction dir, struct ButtonStruct butt, State state) {
   break;
   return state;
   }
+}
+
+void MENU_print_score(uint8_t score) {
+  //TODO
+  OLED_reset();
+  OLED_goto_pos(0,0);
+  OLED_printf("GAME OVER!");
+  OLED_goto_pos(2,0);
+  OLED_printf("YOUR SCORE:");
+  OLED_goto_pos(3,0);
+  char buffer[13];
+  sprintf(buffer, "%d", score);
+  OLED_printf(buffer);
 }

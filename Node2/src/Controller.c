@@ -82,7 +82,7 @@ volatile short int encoder_sum;
 //volatile Control control_type; REMOVE?
 
 void CONTROLLER_Init() {
-  CONTROLLER_setControlTerms(1,1,1);
+  CONTROLLER_setControlTerms(0.25,0.00,0.35);
   T_PID = 1;
   error_sum = 0;
 
@@ -120,8 +120,6 @@ short int CONTROLLER_calculateError(short int  measured_value, Control controlTy
       return difference;
     }
   }
-
-
  }
 
 void CONTROLLER_setControlTerms(float p, float i, float d) {
@@ -134,7 +132,7 @@ short int CONTROLLER_calculateOutput(short int error, Control controlType) {
   error_sum += error;
   //printf("PID values: %f, %f, %f \n\r", K_p, K_i, K_d);
   //float output;
-  if(controlType) { //PD
+  if((controlType == JOYSTICK) || (controlType == INITIALIZE) ) { //PD
     output = -((K_p * (float)error) + (T_PID * K_i * ((float)error_sum)) + ((K_d/T_PID) * ((float)error - (float)last_error)));
   }
   else { //PID
@@ -153,7 +151,7 @@ void CONTROLLER_updateController(Control controlType) {
   //PORTL ^= (1<<PL6);
   encoder_value = MOTOR_getEncoderValue();
 
-  if(controlType == JOYSTICK) { //PD
+  if((controlType == JOYSTICK) || (controlType == INITIALIZE)) { //PD
     //scaledJoystickValue = scaleJoystickSpeed(joystickval);
     //printf("Scaled joystick value: %hi , ", scaledJoystickValue);
     error = CONTROLLER_calculateError(encoder_value, controlType);
@@ -174,14 +172,13 @@ void CONTROLLER_setReference(short int in){
 }
 
 void CONTROLLER_setEncoderMax(short int encoderMax) {
-  encoder_max = 9500;
+  encoder_max = encoderMax;
   //encoder_max = encoderMax;
   printf("Encoder max set to: %hi\n\r", encoderMax);
 }
 
 void CONTROLLER_addEncoderSum(short int encoderTerm) {
   encoder_sum += encoderTerm;
-  //printf("Encoder sum: %hi \n\r", encoder_sum);
 }
 
 short int CONTROLLER_getEncoderSum() {

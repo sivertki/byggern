@@ -25,20 +25,36 @@ void can_message_send(struct CANMessage* message) {
   MCP_requestToSend(0);
 }
 
-struct CANMessage can_data_receive() {
+struct CANMessage can_data_receive(Buffer buf) {
   struct CANMessage returnMessage;
 
-  uint8_t threeLSB = (MCP_reads(RXB0SIDL) & 0b11100000)>>5;
-  unsigned int SIDH = MCP_reads(RXB0SIDH)<<3;
+  if(buf==BufferZero) {
+  //Buffer zero
+      uint8_t threeLSB = (MCP_reads(RXB0SIDL) & 0b11100000)>>5;
+      unsigned int SIDH = MCP_reads(RXB0SIDH)<<3;
 
-  returnMessage.id = SIDH | threeLSB;
+      returnMessage.id = SIDH | threeLSB;
 
-  returnMessage.length = MCP_reads(RXB0DLC) & 0x0F;
+      returnMessage.length = MCP_reads(RXB0DLC) & 0x0F;
 
-  for(uint8_t i = 0; i < returnMessage.length; i++) {
-      returnMessage.data[i] = MCP_reads(RXB0D0 + i);
+      for(uint8_t i = 0; i < returnMessage.length; i++) {
+          returnMessage.data[i] = MCP_reads(RXB0D0 + i);
+      }
+    
   }
+  else if(buf == BufferOne) { //Buffer one
+      uint8_t threeLSB = (MCP_reads(RXB1SIDL) & 0b11100000)>>5;
+      unsigned int SIDH = MCP_reads(RXB1SIDH)<<3;
 
+      returnMessage.id = SIDH | threeLSB;
+
+      returnMessage.length = MCP_reads(RXB1DLC) & 0x0F;
+
+      for(uint8_t i = 0; i < returnMessage.length; i++) {
+          returnMessage.data[i] = MCP_reads(RXB1D0 + i);
+      }
+  }
+  MCP_writes(MCP_CANINTF, 0x00);
   return returnMessage;
 }
 

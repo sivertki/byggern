@@ -15,3 +15,5 @@ void MENU_home();
  * \param butt A struct ButtonStruct that containing the button presses.
  */
 State MENU_nav(Direction dir, struct ButtonStruct butt, State state);
+
+void MENU_print_score(uint8_t score);
