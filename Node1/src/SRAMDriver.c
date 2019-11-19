@@ -2,8 +2,6 @@
 #define F_CPU 4915200UL
 #endif
 
-
-
 #include <stdlib.h>
 #include <avr/io.h>
 #include <stdio.h>

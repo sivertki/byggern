@@ -55,6 +55,9 @@ void MENU_home() {
   current_menu_selection = 1;
 }
 
+/**
+ * \brief A function that writes out the credits to the screen.
+ */
 void MENU_credits() {
   OLED_goto_line(0);
   OLED_set_font(8);
@@ -67,6 +70,10 @@ void MENU_credits() {
   }
 }
 
+/**
+ * \brief A function that prints the indicators that shows the selected menu item.
+ * \param str[] A char array containing the menu item selected.
+ */
 void menu_print_selected(char str[]) {
   OLED_printf(">");
   OLED_printf(str);
@@ -184,6 +191,9 @@ case HIGHSCORES:
   }
 }
 
+/**
+ * \brief A function that prints the highscore list stored in the SRAM to the screen.
+ */
 void MENU_highscores() {
   OLED_printf("-HIGHSCORES-");
   OLED_goto_pos(2,0);
@@ -218,9 +228,6 @@ void MENU_print_score(uint8_t score) {
     uint8_t highSRAM = SRAM_highscoreR(i);
     //printf("Highscore found in SRAM = %d, Your highscore = %d", highSRAM, score);
 
-    //uint8_t tempScoreOne;
-    //uint8_t tempScoreTwo;
-
     char highStore[5];
 
     if(score > SRAM_highscoreR(i)) {
@@ -232,37 +239,6 @@ void MENU_print_score(uint8_t score) {
       for(uint8_t k = 0; k < 4 - i; k++) {
         SRAM_highscoreW(highStore[k + i], (i + 1) + k);
       }
-      /*
-      switch (i)
-      {
-      case 0:
-        tempScoreOne = SRAM_highscoreR(i + 1);
-        SRAM_highscoreW(SRAM_highscoreR(i), i + 1);
-        tempScoreTwo = SRAM_highscoreR(i + 2);
-        SRAM_highscoreW(tempScoreOne, i + 2);
-        tempScoreOne = SRAM_highscoreR(i + 3);
-        SRAM_highscoreW(tempScoreTwo, i + 3);
-        SRAM_highscoreW(tempScoreOne, i + 4);
-        break;
-      case 1:
-        tempScoreOne = SRAM_highscoreR(i + 1);
-        SRAM_highscoreW(SRAM_highscoreR(i), i + 1);
-        tempScoreTwo = SRAM_highscoreR(i + 2);
-        SRAM_highscoreW(tempScoreOne, i + 2);
-        SRAM_highscoreW(tempScoreTwo, i + 3);
-        break;
-      case 2:
-        tempScoreOne = SRAM_highscoreR(i + 1);
-        SRAM_highscoreW(SRAM_highscoreR(i), i + 1);
-        SRAM_highscoreW(tempScoreOne, i + 2);
-        break;
-      case 3:
-        SRAM_highscoreW(SRAM_highscoreR(i), i + 1);
-        break;
-      default:
-        break;
-      }
-      */
 
       _delay_ms(5);
       SRAM_highscoreW(score, i);
@@ -283,6 +259,4 @@ void MENU_print_score(uint8_t score) {
   }
 
   _delay_ms(2000);
-  //MENU_print_highscores();
-  //_delay_ms(5000);
 }

@@ -27,11 +27,28 @@ void CONTROLLER_Init();
 void CONTROLLER_setControlTerms(float p, float i, float d);
 
 /**
+ * \brief A function that updates the controller by sending the controller output to the MOTOR_setMovement function.
+*/
+void CONTROLLER_updateController(Control controlType);
+
+/**
  * \brief A function that sets the reference that the controller is supposed to stear towards.
 */
 void CONTROLLER_setReference(uint8_t in, Control controlType);
 
 /**
- * \brief A function that updates the controller by sending the controller output to the MOTOR_setMovement function.
-*/
-void CONTROLLER_updateController(Control controlType);
+ * \brief A function that returns the encoder_sum to other files that might need it.
+ * \return Returns the encoder_sum value.
+ */
+short int CONTROLLER_getEncoderSum();
+
+/**
+ * \brief A function that sets the encoder_sum value from outside files.
+ */
+void CONTROLLER_setEncoderSum(short int es);
+
+/**
+ * \brief A function that returns the encoder_max to other files that might need it.
+ * \return Returns the encoder_max value.
+ */
+short int CONTROLLER_getEncoderMax();

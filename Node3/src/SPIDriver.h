@@ -1,6 +1,6 @@
 /**
  * \file SPIDriver2.h
- * \brief A file that facilitates the SPI communication between the I/O board and the Arduino Mega2560.
+ * \brief A file that facilitates the SPI communication between the MCP2515 and the ATMega168.
  */
 
 #define DDR_SPI DDRB
@@ -10,7 +10,7 @@
 #define DD_SCK DDB5
 
 /**
- * \brief A function that initilaizes the SPI communication on the ATMega162.
+ * \brief A function that initilaizes the SPI communication on the ATMega168.
  */
 void SPI_init();
 
@@ -22,5 +22,6 @@ void SPI_transmit(char cData);
 
 /**
  * \brief A function that recieves data sent from the MCP over the SPI.
+ * \return Returns a char containing the data sent from the MCP over SPI.
 */
 char SPI_receive(void);

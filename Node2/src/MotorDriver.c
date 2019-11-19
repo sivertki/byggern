@@ -12,7 +12,7 @@
 #define DIR PH1
 
 void MOTOR_initialize() {
-  //set pins dor !RST, !OE, EN, SEL, DIR as output
+  //set pins for !RST, !OE, EN, SEL, DIR as output
   DDRH |= 1<<PH6 |1<<PH5 | 1<<PH4 | 1<<PH3 | 1<<PH1;
 
   //Enable Motor
@@ -26,6 +26,10 @@ void MOTOR_initialize() {
   TWI_Master_Initialise();
 }
 
+/**
+ * A function that sets the speed that the motor should move in.
+ * \param speed An uint8_t containing the speed [0, 255].
+ */
 void MOTOR_setSpeed(uint8_t speed) {
 
   unsigned char I2CMessage[3];
@@ -41,6 +45,10 @@ void MOTOR_setSpeed(uint8_t speed) {
   TWI_Start_Transceiver_With_Data(I2CMessage, 3);
 }
 
+/**
+ * A function that sets the direction that the motor should move in.
+ * param dir A motorDirection containing the direction the motor should move in [MotorLeft, MotorRight].
+ */
 void MOTOR_setDirection(motorDirection dir) {
   if(dir == MotorLeft) {
     PORTH &= ~(1<<PH1);
@@ -104,4 +112,3 @@ void MOTOR_resetEncoder() {
   _delay_us(200);
   PORTH ^= 1<<nRST;
 }
-

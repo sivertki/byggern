@@ -29,8 +29,14 @@ void SERVO_setDutyCycle(uint8_t controlIn) {
 }
 
 //Scales from value read from ADC of joystick to value used in Duty Cycle
+/**
+ * \brief A function that scales the PWM control value to the correct scale.
+ * \paramm controlIn An uint8_t containing the value that is to be scaled.
+ * \return An uint8_t that contains the scaled value.
+ * Scales a value from the SERVO_setDutyCycle function that is from the ADC value
+ * of the joystick wich will be in the range of [0, 255].
+ */
 uint16_t getScaledSensorValue(uint8_t controlIn){
   uint16_t outCompare = controlIn*((4200 - 1800)/255) + 1800;
   return outCompare;
-
 }

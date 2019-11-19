@@ -12,8 +12,8 @@
 #define BAUD 9600
 #define MYUBBR 103 //TODO calculate FOSC/16/BAUD-1
 
+// A CANMessage struct used to contain the recieved message.
 static volatile struct CANMessage receivedMessage;
-//void interpret_CAN_message(struct CANMessage msg);
 
 void main(){
     cli();
@@ -27,7 +27,7 @@ void main(){
     IO_init();
     //IO pin used to blink LED, for heartbeat
     DDRC |= (1<<PC0);
-    
+
     sei();
     while(1){
         //Heartbeat
@@ -37,7 +37,7 @@ void main(){
 }
 
 
-
+// interrupt triggered by recieving a CAN message.
 ISR(INT0_vect){
     uint8_t int_flags = MCP_reads(MCP_CANINTF);
 
@@ -60,4 +60,3 @@ ISR(INT0_vect){
             IO_silence_buzzer();
     }
 }
-

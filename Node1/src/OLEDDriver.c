@@ -7,7 +7,9 @@
 #define BASE_OLED_D_ADDRESS 0x1200
 #define TOTAL_PAGE_NUMBERS 8
 
+#ifndef F_CPU
 #define F_CPU 4915200
+#endif
 
 volatile char *ext_oled_d = (char*) BASE_OLED_D_ADDRESS;
 volatile char *ext_oled_c = (char*) BASE_OLED_C_ADDRESS;
@@ -46,10 +48,18 @@ void OLED_init() {
   //OLED_write_command(0xa5);       //Set entire display on
 }
 
+/**
+ * \brief A function that writes data to the OLED.
+ * \param data An uint8_t containing the data that should be written.
+ */
 void OLED_write_data(uint8_t data) {
   ext_oled_d[0] = data;
 }
 
+/**
+ * \brief A function that writes a command to the OLED.
+ * \param data An uint8_t containing the command that should be written.
+ */
 void OLED_write_command(uint8_t data) {
   ext_oled_c[0] = data;
 }
@@ -62,6 +72,10 @@ void OLED_goto_line(uint8_t line) {
   pos.row = line * 8;
 }
 
+/**
+ * \brief A function that moves the "cursor" to the column specified by the parameter.
+ * \param col An uint8_t containing the column that the cursor should move to.
+ */
 void OLED_goto_column(uint8_t col) {
   uint8_t temp = col;
   uint8_t high_nibble = 0x10;
@@ -77,6 +91,10 @@ void OLED_goto_column(uint8_t col) {
   pos.column = col;
 }
 
+/**
+ * \brief A function that clears the line specified in the parameter.
+ * \param line An uint8_t containing the line number that should be cleared.
+ */
 void OLED_clear_line(uint8_t line) {
   OLED_goto_line(line);
   for(uint8_t i = 0; i < 128; i ++) {
@@ -90,6 +108,10 @@ void OLED_goto_pos(uint8_t line, uint8_t column) {
   OLED_goto_column(column);
 }
 
+/**
+ * \brief A function that sets the brightness of the OLED screen.
+ * \param lvl An uint8_t containing the brightness level desired.
+ */
 void OLED_set_brightness(uint8_t lvl) {
   OLED_write_command(0x81);
   OLED_write_command(lvl);

@@ -6,16 +6,15 @@
 #include <stdio.h>
 #include "DEFINITIONS.h"
 
+/**
+ * \brief A function that enables the interrupt for the joystick button.
+ */
 void ADC_interrupt_enable();
-void ADC_interrupt_disable();
 
 /**
- * \brief A struct containing the percentage of movement in the joystick X/Y directions.
+ * \brief A function that disables the interrupt for the joystick button.
  */
-struct Percentage {
-    int xPercentage; /**< The percentage of change in x-direction. */
-    int yPercentage; /**< The percentage of change in y-direction.*/
-};
+void ADC_interrupt_disable();
 
 /**
  * \brief A function that returns the values of the sliders and the joystick positions.
@@ -25,6 +24,8 @@ struct QuadADCChannels ADC_get_adc_values(void);
 
 /**
  * \brief A function that calibrates the joystick center positions.
+ * Since the center of the joystick axis can drift around a bit this is needed to
+ * make sure that the center is known. Sets the xCenter and yCenter variables.
  */
 void ADC_joystick_calibration(void);
 
@@ -33,9 +34,3 @@ void ADC_joystick_calibration(void);
  * \return Returns a Direction (specified by the Direction enum) which can be [LEFT, RIGH, UP, DOWN].
  */
 Direction ADC_get_joystick_direction(void);
-
-/**
- * \brief A function that calculates the percentage displacement of the joystick in the X- and Y-axis.
- * \return Returns a Percentage struct containing the percentages of joystick displacement from the center.
- */
-struct Percentage joy_pos(void);

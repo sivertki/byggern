@@ -14,15 +14,17 @@ typedef enum {
 } motorDirection;
 
 /**
- * \brief A function that sets the movement of the motor based on the parameter.
- * \param controllerOutput a output value from the *JOYSTICK* [0, 255].
- */
-void MOTOR_setMovement(short int controllerOutput);
-
-/**
- * \brief A function that initilaizes the motor.
+ * \brief A function that initilaizes the motor that moves the pingpong cart.
+ * Enables the pins controlling the motor as well as the pins recieving information
+ * from the motor. Also initilaizes the TWI communication.
  */
 void MOTOR_initialize();
+
+/**
+ * \brief A function that sets the movement of the motor based on the parameter.
+ * \param controllerOutput A short int containing the value calculated in the controller.
+ */
+void MOTOR_setMovement(short int controllerOutput);
 
 /**
  * \brief A function that fetches the encoder value from the encoder.
@@ -30,4 +32,7 @@ void MOTOR_initialize();
  */
 short int MOTOR_getEncoderValue();
 
+/**
+ * A function that resets the value of the encoder register on the motor box.
+ */
 void MOTOR_resetEncoder();

@@ -1,17 +1,19 @@
 /**
- * \file A file
+* \file MCPDriver.h
+* \brief A file that makes it possible to control the MCP2515.
  */
 
 #include <stdio.h>
 
 /**
- * \brief A function that initilaizes the MCP2515, and its interrupts.
+ * \brief A function that initilaizes the MCP2515 and its interrupts.
 */
 void MCP_init();
 
 /**
  * \brief A function that reads an 8-bit value from the register specified in the parameter.
  * \param address A uint8_t containing the address of the register that is to be read.
+ * \return Returns an uint8_t containing the data read on the address of the MCP.
 */
 uint8_t MCP_reads(uint8_t address);
 

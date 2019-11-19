@@ -6,7 +6,6 @@
 void IO_init() {
     //Set data direction of buzzer pin
     DDRC |= (1<<BUZZER_PIN);
-
 }
 
 void IO_sound_buzzer() {

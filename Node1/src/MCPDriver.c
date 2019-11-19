@@ -12,9 +12,7 @@ void MCP_init() {
   MCUCR &= ~(1<<ISC01 | 1<<ISC00);
   GICR |= (1<<6);
 }
-/*
 
-*/
 uint8_t MCP_reads(uint8_t address){
   uint8_t result;
   PORTB &= ~(1<<DD_SS); // Select CAN-controller
@@ -77,6 +75,9 @@ uint8_t MCP_readStatus() {
   return temp;
 }
 
+/**
+ * \brief A function that transmits a reset command to the MCP.
+ */
 void MCP_reset() {
   PORTB &= ~(1<<DD_SS);
   SPI_transmit(MCP_RESET);

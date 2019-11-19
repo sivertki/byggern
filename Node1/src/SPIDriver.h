@@ -1,6 +1,6 @@
 /**
  * \file SPIDriver.h
- * \brief A file that facilitates the SPI communication between the MCP2515 and the ATMega162. 
+ * \brief A file that facilitates the SPI communication between the MCP2515 and the ATMega162.
  */
 
 #define DDR_SPI DDRB
@@ -22,5 +22,6 @@ void SPI_transmit(char cData);
 
 /**
  * \brief A function that recieves data sent from the MCP over the SPI.
+ * \return Returns a char containing the data sent from the MCP over SPI.
 */
 char SPI_receive(void);

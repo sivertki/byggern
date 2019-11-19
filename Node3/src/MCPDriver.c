@@ -13,9 +13,7 @@ void MCP_init() {
   EICRA &= ~(1<<ISC01 | 1<<ISC00);
   EIMSK |= (1<<0);
 }
-/*
 
-*/
 uint8_t MCP_reads(uint8_t address){
   uint8_t result;
   PORTD &= ~(1<<PD4);
@@ -88,6 +86,9 @@ uint8_t MCP_readStatus() {
   return temp;
 }
 
+/**
+ * \brief A function that transmits a reset command to the MCP.
+ */
 void MCP_reset() {
   //PORTB &= ~(1<<DD_SS);
   PORTD &= ~(1<<PD4);

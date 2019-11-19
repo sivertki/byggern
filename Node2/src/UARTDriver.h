@@ -26,7 +26,7 @@
 void USART_Init(void);
 
 /**
- * \brief A function that transmits the data specified in the param.
+ * \brief A function that transmits the data specified in the parameter.
  * \param data An unsigned char that will be transmitted over the USART.
  */
 void USART_transmit(unsigned char data);

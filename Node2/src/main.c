@@ -15,25 +15,30 @@
 #include "SolenoidDriver.h"
 
 /**
- * \brief
+ * \brief An uint8_t used to contain the score of the current game being played.
  */
 static uint8_t gameScore = 0;
 
 /**
- * \brief
+ * \brief A Control struct used to hold the current control type.
+ * Can be in these states: [SLIDER, JOYSTICK, INITIALIZE, NONE]
  */
 Control control_type = JOYSTICK;
 
 /**
- * \brief
+ * \brief An enum that contains the two states of counting that can occur.
  */
 typedef enum IsCounting {yesCounting, noCounting} IsCounting;
 
 /**
- * \brief
+ * \brief An IsCounting that keeps track of the current state of counting.
  */
 IsCounting counting_state = noCounting;
 
+/**
+* \brief An int that is used to keep track of the game state.
+* When this no longer is zero (but one) the game enters its fail state.
+*/
 int result = 0;
 
 
@@ -163,6 +168,9 @@ ISR(INT4_vect) {
   EIFR &= ~(1<<4);
 }
 
+/**
+ * \brief An int used to make sure that the score doesnt increase too fast.
+ */
 int scoreIterator = 0;
 
 /**

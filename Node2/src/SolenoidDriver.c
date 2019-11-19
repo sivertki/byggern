@@ -3,9 +3,9 @@
 #include <util/delay.h>
 
 void SOLENOID_init() {
-  //sets up output port to control solenoid.
+  // Sets up output port to control solenoid.
   DDRA |= (1<<PA1);
-  //Set standard high
+  // Set standard high
   PORTA |= (1<<PA1);
 }
 

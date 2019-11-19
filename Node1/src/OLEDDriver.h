@@ -16,7 +16,7 @@ struct OLED_position {
 };
 
 /**
- * \brief A function that initilaizes OLED.
+ * \brief A function that initilaizes OLED according to its data sheet.
  */
 void OLED_init();
 
@@ -43,16 +43,20 @@ void OLED_reset();
 void OLED_printf(char str[]);
 
 /**
- * \biref A function that
+ * \biref A function that moves the "cursor" to the position specified by the parameters.
+ * \param line An uint8_t containing the line that the cursor should move to.
+ * \param column An uint8_t containing the column that the cursor should move to.
  */
 void OLED_goto_pos(uint8_t line, uint8_t column);
 
 /**
- * \biref A function that
+ * \biref A function that moves the "cursor" to the line specified by the parameter.
+ * \param line An uint8_t containing the line that the cursor should move to.
  */
 void OLED_goto_line(uint8_t line);
 
 /**
- * \biref A function that
+ * \biref A function that sets the font size for the writing on the OLED.
+ * \param fsize An uint8_t containing the size that is selected, [4, 5, 8].
  */
 void OLED_set_font(uint8_t fsize);

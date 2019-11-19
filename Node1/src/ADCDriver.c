@@ -9,7 +9,9 @@
 #define BASE_ADDRESS 0x1000 // Start of the OLED (command) address partition.
 #define BASE_ADC_ADDRESS 0x1400 // Start of the ADC address partition.
 
+#ifndef F_CPU
 #define F_CPU 4915200 // Clock frequency in Hz
+#endif
 
 #define CHAN1_SELECT 0x0004 // Select the left slider value stored in the ADC partition of the SRAM.
 #define CHAN2_SELECT 0x0005 // Select the right slider value stored in the ADC partition of the SRAM.
@@ -26,14 +28,7 @@ void ADC_interrupt_disable() {
   GICR &= ~(1<<5);
 }
 
-/**
- * \brief A function
- */
 void set_channel(int channel);
-
-/**
- * \brief A function
- */
 uint8_t read_channel(void);
 
 /**
@@ -66,7 +61,8 @@ struct QuadADCChannels ADC_get_adc_values() {
 }
 
 /**
- * \brief A function
+ * \brief A function that sets the channel that should be read from the ADC.
+ * \param channel An int containing the value of the channel,  [1, 4].
  */
 void set_channel(int channel) {
    volatile char *ext_adc = (char*) BASE_ADC_ADDRESS;
@@ -88,7 +84,8 @@ void set_channel(int channel) {
 }
 
 /**
- * \brief A function
+ * \brief A function that reads the selected channel and returns it.
+ * \return Returns an uint8_t containing the value from the ADC.
  */
 uint8_t read_channel(void) {
      volatile char *ext_adc = (char*) BASE_ADC_ADDRESS;

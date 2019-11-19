@@ -10,7 +10,7 @@
 #define DD_SCK PB1
 
 /**
- * \brief A function that initilaizes the SPI communication on the ATMega162.
+ * \brief A function that initilaizes the SPI communication on the Mega2560.
  */
 void SPI_init();
 
@@ -22,5 +22,6 @@ void SPI_transmit(char cData);
 
 /**
  * \brief A function that recieves data sent from the MCP over the SPI.
+ * \return Returns a char containing the data sent from the MCP over SPI.
 */
 char SPI_receive(void);

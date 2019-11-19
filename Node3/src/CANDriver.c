@@ -1,6 +1,7 @@
 #include "CANDriver.h"
 #include "MCPDriver.h"
 #include "MCP2515.h"
+
 void can_init() {
   MCP_writes(MCP_CANCTRL, 0x0<<5);
 }
@@ -40,7 +41,7 @@ struct CANMessage can_data_receive(Buffer buf) {
       for(uint8_t i = 0; i < returnMessage.length; i++) {
           returnMessage.data[i] = MCP_reads(RXB0D0 + i);
       }
-    
+
   }
   else if(buf == BufferOne) { //Buffer one
       uint8_t threeLSB = (MCP_reads(RXB1SIDL) & 0b11100000)>>5;
@@ -56,13 +57,4 @@ struct CANMessage can_data_receive(Buffer buf) {
   }
   MCP_writes(MCP_CANINTF, 0x00);
   return returnMessage;
-
-
-
-
-
 }
-
-//can_error()
-//can_transmit_complete()
-//can_int_vect()
